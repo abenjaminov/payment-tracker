@@ -1,0 +1,16 @@
+<div class="trainers box" *ngIf="trainerService.isLoaded">
+  <div class="table">
+    <div class="row row-title">
+      <div class="col col-title">Name</div>
+      <div class="col col-title">Phone Number</div>
+      <div class="col col-title">Payment</div>
+      <div class="col col-title">Debt</div>
+    </div>
+    <div class="row" *ngFor="let trainer of trainerService.allTrainers">
+      <div class="col">{{trainer.name}}</div>
+      <div class="col">{{trainer.phoneNumber}}</div>
+      <div class="col">{{trainer.basePayment}}₪</div>
+      <div class="col">{{trainer.debt}}₪</div>
+    </div>
+  </div>
+</div>
