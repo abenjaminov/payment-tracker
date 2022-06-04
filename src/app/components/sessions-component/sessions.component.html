@@ -14,6 +14,9 @@
           <div class="col col-title  col-wide">
             Date & Time
           </div>
+          <div class="col col-title">
+            Payment
+          </div>
           <div class="col col-title  col-fill">
             Notes
           </div>
@@ -28,6 +31,7 @@
           <div class="col col-short">{{session.id}}</div>
           <div class="col" (click)="goToClient(session.clientIdRef[0])">{{session.clientName}}</div>
           <div class="col col-wide">{{session.dateString}}</div>
+          <div class="col">{{session.payment}}</div>
           <div class="col col-fill">{{session.notes}}</div>
           <div class="col" [ngClass]="{'session-owed' : session.paymentState == SessionPaymentState.owed,
                                        'session-payed' : session.paymentState == SessionPaymentState.payed,
