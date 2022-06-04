@@ -1,0 +1,20 @@
+<div class="paging box">
+  <div class="page-switch previous-page" [ngClass]="{'disabled' : pagingService.page == 1}" (click)="onPreviousPageClicked()">
+    <i class="fa fa-chevron-left"></i>
+  </div>
+  <div class="pages">
+    <div class="page-link" (click)="onPageLinkClicked(1)"*ngIf="showFirstPage"
+         [ngClass]="{'current-page' : 1 == pagingService.page}">1</div>
+    <div class="page-link" *ngIf="showFirstPage">...</div>
+
+    <div *ngFor="let page of pages" class="page-link" (click)="onPageLinkClicked(page)"
+         [ngClass]="{'current-page' : page == pagingService.page}">{{page}}</div>
+
+    <div class="page-link" *ngIf="showLastPage">...</div>
+    <div class="page-link" (click)="onPageLinkClicked(pagingService.numberOfPages)" *ngIf="showLastPage"
+         [ngClass]="{'current-page' : pagingService.numberOfPages == pagingService.page}">{{pagingService.numberOfPages}}</div>
+  </div>
+  <div class="page-switch next-page" [ngClass]="{'disabled' : pagingService.page == pagingService.numberOfPages}" (click)="onNextPageClicked()">
+    <i class="fa fa-chevron-right"></i>
+  </div>
+</div>

@@ -1,8 +1,8 @@
 import {Injectable} from "@angular/core";
 import {ApiService} from "./api.service";
-import {AirTableEntity} from "../models";
+import {AirTableEntity, GetPagedArgs} from "../models";
 
-export interface GetClientsArgs {
+export interface GetClientsArgs extends GetPagedArgs {
   filterId?: string;
   filterText?: string;
 }

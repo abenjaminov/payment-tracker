@@ -19,6 +19,7 @@ import {LoaderContentComponent} from "./components/loader-content/loader-content
 import {MessagePopupComponent} from "./components/message-popup/message-popup.component";
 import {SessionCalendarComponent} from "./components/session-calendar/session-calendar.component";
 import {SessionEditorComponent} from "./components/session-editor/session-editor.component";
+import {PagingComponent} from "./components/paging/paging.component";
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import {SessionEditorComponent} from "./components/session-editor/session-editor
     LoaderContentComponent,
     MessagePopupComponent,
     SessionCalendarComponent,
-    SessionEditorComponent
+    SessionEditorComponent,
+    PagingComponent
   ],
   imports: [
     BrowserModule,

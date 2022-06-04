@@ -1,7 +1,6 @@
 import {Injectable} from "@angular/core";
 import {ApiService} from "./api.service";
-import {AirTableEntity} from "../models";
-import * as datetime from "dayjs";
+import {AirTableEntity, GetPagedArgs} from "../models";
 import {
   MessagePopupComponentService,
   MessagePopupType
@@ -9,7 +8,7 @@ import {
 import {systemMessages} from "../../messages";
 import dayjs from "dayjs";
 
-export interface GetSessionArgs {
+export interface GetSessionArgs extends GetPagedArgs{
   filterClientId?: string;
   filterMonth?: number;
   filterPaymentState?: SessionPaymentState

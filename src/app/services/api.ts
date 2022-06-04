@@ -66,23 +66,25 @@ export class Api {
   async getNextSessionId() {
     let selectResult = await this.identifiersTable.select({view: "Grid view"}).firstPage();
     let identifiers : Identifiers = this.getViewObject(selectResult)[0];
+    let result = identifiers.nextSessionId;
 
     identifiers.nextSessionId++;
 
     await this.updateIdentifiers(identifiers);
 
-    return identifiers.nextSessionId;
+    return result;
   }
 
   async getNextClientId() {
     let selectResult = await this.identifiersTable.select({view: "Grid view"}).firstPage();
     let identifiers : Identifiers = this.getViewObject(selectResult)[0];
+    let result = identifiers.nextClientId;
 
     identifiers.nextClientId++;
 
     await this.updateIdentifiers(identifiers);
 
-    return identifiers.nextClientId;
+    return result;
   }
 
   async getQueriesRecordId() {
@@ -113,6 +115,8 @@ export class Api {
       action: async (filter: GetClientsArgs) => {
         //this.fixClients()
 
+        let pageSize = filter && filter.pageSize ? filter.pageSize : 100;
+
         let filterFormula = '';
         let result: any[];
         if(filter && filter.filterId) {
@@ -126,6 +130,8 @@ export class Api {
               let lowerFilter = filter.filterText.toLowerCase();
               conditions.push(`OR(FIND({name},'${lowerFilter}') != 0,FIND({notes},'${lowerFilter}') != 0`)
             }
+
+            conditions.push(`FLOOR({id} / ${pageSize}) = ${filter.page - 1}`);
 
             filterFormula = `AND(${conditions.join(",")})`;
           }
@@ -144,9 +150,9 @@ export class Api {
       }
     },{ url: 'sessions', type: 'get',
       action : async (filter: GetSessionArgs) => {
-        //this.fixSessions()
-
         let filterFormula = '';
+
+        let pageSize = filter && filter.pageSize ? filter.pageSize : 100;
 
         if(filter) {
           const conditions = [];
@@ -168,12 +174,15 @@ export class Api {
             conditions.push(`OR(FIND('${lowerFilter}', LOWER({notes})),FIND('${lowerFilter}', LOWER({clientName}&'')))`)
           }
 
+          if(filter.page) {
+            conditions.push(`FLOOR({id} / ${pageSize}) = ${filter.page - 1}`);
+          }
+
           filterFormula = `AND(${conditions.join(",")})`;
         }
 
         const selectResult = await this.sessionsTable.select({
-          pageSize: 20,
-          offset: 0,
+          pageSize: pageSize,
           view: 'Grid view',
           filterByFormula: filterFormula,
           sort: [{ field: 'date', direction: 'desc' }]
@@ -189,7 +198,7 @@ export class Api {
 
         const selectResult = await this.queriesTable.select({
           view: 'Grid view',
-          fields: ['thisMonthRevenue']
+          fields: ['thisMonthRevenue'],
         }).firstPage();
 
         let result = this.getViewObject(selectResult);
@@ -260,6 +269,8 @@ export class Api {
           await this.clientsTable.destroy(client.airTableId);
         }
 
+        const clientAsAny = (client as any);
+
         let newClient: any = {
           fields: {
             id: client.id ? client.id : await this.getNextClientId(),
@@ -268,17 +279,29 @@ export class Api {
             basePayment: client.basePayment,
             isActive: true,
             sessions: '',
-            clientSessionIds : []
+            clientSessionIds : [],
+            LinkToQueries: clientAsAny.LinkToQueries ? clientAsAny.LinkToQueries : [await this.getQueriesRecordId()]
           }
         }
 
         await this.clientsTable.create([newClient])
-
-
       }
     }, { url: 'sessions', type: 'delete',
       action: async (id: string) => {
         await this.sessionsTable.destroy(id);
+      }
+    }, { url: 'count', type: 'get',
+      action: async (entityName: string) => {
+        const fieldName = `${entityName}-count`
+
+        const selectResult = await this.queriesTable.select({
+          view: 'Grid view',
+          fields: [fieldName]
+        }).firstPage();
+
+        let result = this.getViewObject(selectResult);
+
+        return result[0][fieldName];
       }
     })
   }

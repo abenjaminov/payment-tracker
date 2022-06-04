@@ -76,3 +76,8 @@ export class SessionDay {
   sessions?: Array<Session>;
   firstThreeSessions?: Array<Session>;
 }
+
+export interface GetPagedArgs {
+  page?: number;
+  pageSize?: number;
+}
