@@ -1,0 +1,57 @@
+<div class="sessions box">
+  <div class="title" *ngIf="title">
+    {{title}}
+  </div>
+  <div class="sessions-list">
+    <div class="table table-bordered">
+      <div class="row row-title">
+        <div class="col col-title col-wide">Date</div>
+        <div class="col col-title">Payment</div>
+        <div class="col col-fill col-title">Notes</div>
+        <div class="col col-title fill">State</div>
+        <div class="col col-title fill">Actions</div>
+      </div>
+      <div class="row" *ngIf="sessionToAdd">
+        <div class="col col-wide"><input type="datetime-local" #datePicker required [ngModel]="sessionToAdd.date | date:'yyyy-MM-ddTHH:mm'" (ngModelChange)="onSessionToAddDateChanged(sessionToAdd, $event)"/></div>
+        <div class="col"><input type="text" inputmode="numeric" pattern="\d*" required [(ngModel)]="sessionToAdd.payment"/></div>
+        <div class="col col-fill"><input type="text" [(ngModel)]="sessionToAdd.notes"/></div>
+        <div class="col">--</div>
+        <div class="col col-action" (click)="onAddSessionClicked()"><i class="fa-solid fa-plus"></i> Add</div>
+      </div>
+      <ng-container *ngFor="let session of sessions">
+        <div class="row" *ngIf="editedSessionId === session.id">
+          <div class="col col-wide"><input type="datetime-local" required [ngModel]="session.date | date:'yyyy-MM-ddTHH:mm'" (ngModelChange)="onSessionToAddDateChanged(session, $event)"/></div>
+          <div class="col"><input type="text" inputmode="numeric" pattern="\d*" required [(ngModel)]="session.payment"/></div>
+          <div class="col col-fill"><input type="text" [(ngModel)]="session.notes"/></div>
+          <div class="col">--</div>
+          <div class="col col-action" (click)="onSaveSessionClicked(session)"><i class="fa-solid fa-floppy-disk"></i></div>
+        </div>
+        <div class="row" *ngIf="editedSessionId != session.id">
+          <div class="col col-wide">{{session.dateString}}</div>
+          <div class="col">{{session.payment}}₪</div>
+          <div class="col col-fill">{{session.notes}}</div>
+          <div class="col" [ngClass]="{'session-owed' : session.paymentState == SessionPaymentState.owed,
+                                       'session-payed' : session.paymentState == SessionPaymentState.payed,
+                                       'session-future' : session.paymentState == SessionPaymentState.future}">
+            {{session.paymentState == SessionPaymentState.owed ? 'Debt' : (session.paymentState == SessionPaymentState.payed ? 'Payed' : 'Future')}}
+          </div>
+          <div class="col col-action-split">
+            <div class="action" *ngIf="session.paymentState != SessionPaymentState.future" (click)="OnToggleSessionState(session)">
+              <i *ngIf="session.paymentState == SessionPaymentState.owed" class="fa-solid fa-coins"></i>
+              <i *ngIf="session.paymentState == SessionPaymentState.payed" class="fa-solid fa-rotate-left"></i>
+            </div>
+            <div class="action action-empty" *ngIf="session.paymentState == SessionPaymentState.future">
+              &nbsp;
+            </div>
+            <div class="action" (click)="onEditSessionClicked(session)">
+              <i class="fa-solid fa-pen"></i>
+            </div>
+            <div class="action" (click)="onDeleteSessionClicked(session)">
+              <i class="fa-solid fa-minus"></i>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

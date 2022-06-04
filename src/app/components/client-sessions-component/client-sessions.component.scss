@@ -1,0 +1,27 @@
+.sessions {
+  .title {
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 15px;
+  }
+
+  .sessions-list {
+    max-height: 350px;
+    overflow: scroll;
+
+    &::-webkit-scrollbar { width: 0 !important; height: 0!important; }
+  }
+
+  .session-owed {
+    background-color: red;
+  }
+
+  .session-payed {
+    background-color: lightgreen;
+  }
+
+  .session-future {
+    background-color: purple;
+    color:white;
+  }
+}
