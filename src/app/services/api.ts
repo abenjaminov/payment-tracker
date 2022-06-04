@@ -5,6 +5,7 @@ import {AirtableBase} from "airtable/lib/airtable_base";
 import {FieldSet, Records, Table} from "airtable";
 import {Client, GetClientsArgs} from "./client.service";
 import {GetSessionArgs, Session, SessionPaymentState} from "./sessions.service";
+import {AirTableEntity} from "../models";
 
 export class GetArgs {
   page: number;
@@ -17,8 +18,11 @@ export class ApiEndpoint {
   type: string;
 }
 
-class Identifiers {
+class Identifiers implements AirTableEntity{
+  Id: string;
   nextSessionId: number;
+  nextClientId: number;
+  airTableId? : string;
 }
 
 @Injectable({providedIn: 'root'})
@@ -47,11 +51,38 @@ export class Api {
     this.identifiersTable = this.airtableBase('Identifiers')
   }
 
+  async updateIdentifiers(identifiers: Identifiers) {
+    let update = {
+      id : identifiers.airTableId,
+      fields: {
+        Id: identifiers.Id,
+        nextSessionId: identifiers.nextSessionId,
+        nextClientId: identifiers.nextClientId
+      }
+    }
+    await this.identifiersTable.update([update])
+  }
+
   async getNextSessionId() {
     let selectResult = await this.identifiersTable.select({view: "Grid view"}).firstPage();
     let identifiers : Identifiers = this.getViewObject(selectResult)[0];
 
+    identifiers.nextSessionId++;
+
+    await this.updateIdentifiers(identifiers);
+
     return identifiers.nextSessionId;
+  }
+
+  async getNextClientId() {
+    let selectResult = await this.identifiersTable.select({view: "Grid view"}).firstPage();
+    let identifiers : Identifiers = this.getViewObject(selectResult)[0];
+
+    identifiers.nextClientId++;
+
+    await this.updateIdentifiers(identifiers);
+
+    return identifiers.nextClientId;
   }
 
   async getQueriesRecordId() {
@@ -120,6 +151,10 @@ export class Api {
         if(filter) {
           const conditions = [];
 
+          if(filter.filterMonth) {
+            conditions.push(`{month} = ${filter.filterMonth + 1}`);
+          }
+
           if(filter.filterClientId) {
             conditions.push(`{clientIdRef}&'' = '${filter.filterClientId}'`);
           }
@@ -162,12 +197,17 @@ export class Api {
         return result[0]['thisMonthRevenue'];
       }
     },{url: 'debt', type: 'get',
-      action: async () => {
+      action: async (month : number) => {
         // Update sessions
+        let filterFormula = '';
+        if(month) {
+          filterFormula = `{paymentMonth} = ${month}`;
+        }
 
         const selectResult = await this.queriesTable.select({
           view: 'Grid view',
-          fields: ['debt']
+          fields: ['debt'],
+          filterByFormula: filterFormula
         }).firstPage();
 
         let result = this.getViewObject(selectResult);
@@ -177,7 +217,7 @@ export class Api {
     },{
       url: 'future-revenue',
       type: 'get',
-      action: async (mocks, month) => {
+      action: async () => {
         // Update sessions
 
         const selectResult = await this.queriesTable.select({
@@ -220,22 +260,19 @@ export class Api {
           await this.clientsTable.destroy(client.airTableId);
         }
 
-        const sessionsAsAny = (client as any);
-
-        let newSession: any = {
+        let newClient: any = {
           fields: {
-            id: session.id ? session.id : await this.getNextSessionId(),
-            clientIdRef: session.clientIdRef,
-            payment: session.payment,
-            date: session.date,
-            paymentState: SessionPaymentState[session.paymentState],
-            datePayed: session.datePayed,
-            notes: session.notes,
-            LinkToQueries: sessionsAsAny.LinkToQueries ? sessionsAsAny.LinkToQueries : [await this.getQueriesRecordId()]
+            id: client.id ? client.id : await this.getNextClientId(),
+            name: client.name,
+            phoneNumber: client.phoneNumber,
+            basePayment: client.basePayment,
+            isActive: true,
+            sessions: '',
+            clientSessionIds : []
           }
         }
 
-        await this.sessionsTable.create([newSession])
+        await this.clientsTable.create([newClient])
 
 
       }

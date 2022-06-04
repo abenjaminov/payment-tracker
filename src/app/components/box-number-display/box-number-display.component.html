@@ -1,10 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<div class="box-number-display box">
+  <loader *ngIf="!componentData"></loader>
+  <div *ngIf="componentData">
+    <div class="title">
+      {{this.componentData.title}}
+    </div>
+    <div class="content">
+      <div class="number-display">
+        {{this.componentData.value}}
+      </div>
+    </div>
+  </div>
+</div>

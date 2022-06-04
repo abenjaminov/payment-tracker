@@ -1,23 +1,26 @@
-import {Component, ElementRef, Input, ViewChild} from "@angular/core";
+import {Component, Input} from "@angular/core";
 import {ClientService} from "../../services/client.service";
 import {Session, SessionPaymentState, SessionsService} from "../../services/sessions.service";
+import {MessagePopupComponentService, MessagePopupType} from "../message-popup/message-popup.component.service";
+import {systemMessages} from "../../../messages";
 
 @Component({
-  selector: 'sessions',
-  templateUrl: 'sessions.component.html',
-  styleUrls: ['sessions.component.scss']
+  selector: 'client-sessions',
+  templateUrl: 'client-sessions.component.html',
+  styleUrls: ['client-sessions.component.scss']
 })
-export class SessionsComponent {
-  @Input() clientId: string;
+export class ClientSessionsComponent {
+  @Input() clientAirTableId: string;
   @Input() title: string;
 
+  isLoading: boolean;
   SessionPaymentState = SessionPaymentState;
   sessions: Array<Session>;
   sessionToAdd: Session;
 
-  editedSessionId: number;
+  editedSession: Session;
 
-  constructor(public clientService: ClientService, public sessionsService: SessionsService) {
+  constructor(public clientService: ClientService, public sessionsService: SessionsService, private messageService: MessagePopupComponentService) {
   }
 
   async ngOnInit() {
@@ -25,10 +28,11 @@ export class SessionsComponent {
   }
 
   async init() {
+    await this.clientService.loadClient(this.clientAirTableId);
+
     this.initSessionToAdd()
 
-    await this.clientService.loadClient(this.clientId);
-    this.sessions = await this.sessionsService.getSessions(this.clientId);
+    this.sessions = await this.sessionsService.getSessions({filterClientId: this.clientService.selectedClient.id});
   }
 
   initSessionToAdd() {
@@ -37,13 +41,18 @@ export class SessionsComponent {
     this.sessionToAdd = {
       date: new Date(Date.now()),
       paymentState: SessionPaymentState.owed,
-      clientId: this.clientId,
+      clientIdRef: [this.clientService.selectedClient.airTableId],
       payment: this.clientService.selectedClient.basePayment
     }
   }
 
-  OnToggleSessionState(session: Session) {
+  async onToggleSessionState(session: Session) {
+    this.isLoading = true;
     this.sessionsService.toggleSessionPaymentState(session);
+    await this.sessionsService.saveSession(session)
+
+    await this.init();
+    this.isLoading = false;
   }
 
   onSessionToAddDateChanged(session:Session, $event) {
@@ -51,26 +60,56 @@ export class SessionsComponent {
   }
 
   async onAddSessionClicked() {
+    this.isLoading = true;
     await this.sessionsService.addSession(this.sessionToAdd)
 
     await this.init();
+    this.isLoading = false;
   }
 
   async onDeleteSessionClicked(session: Session) {
+    this.isLoading = true;
     await this.sessionsService.deleteSession(session);
 
     await this.init();
+    this.isLoading = false;
   }
 
   onEditSessionClicked(session: Session) {
-    if(this.editedSessionId) {
-      // TODO : ask
+    if(!this.editedSession) {
+      this.editedSession = session;
     }
+    else {
+      this.messageService.showMessage({
+        title: systemMessages.alreadyEditingTitle,
+        message: systemMessages.alreadyEditingMessage,
+        type: MessagePopupType.info,
+        actions: [{
+          text: 'ביטול',
+          isClose: true,
+          action: () => {
+            this.editedSession = session;
+          }
+        },{
+          text: 'שמירה',
+          isPrimary: true,
+          action : async () => {
+            this.messageService.closeMessage();
+            await this.onSaveSessionClicked(this.editedSession)
 
-    this.editedSessionId = session.id;
+            this.editedSession = session;
+          }
+        }]
+      })
+    }
   }
 
-  onSaveSessionClicked(session: Session) {
-    this.editedSessionId = undefined;
+  async onSaveSessionClicked(session: Session) {
+    this.isLoading = true;
+    await this.sessionsService.saveSession(session);
+    this.editedSession = undefined;
+
+    await this.init();
+    this.isLoading = false;
   }
 }

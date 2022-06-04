@@ -1,0 +1,15 @@
+.filter {
+  margin-bottom: 20px;
+
+  .label  {
+    margin-right: 10px;
+  }
+
+  .search-text {
+    display: flex;
+
+    input {
+      width: 125px;
+    }
+  }
+}

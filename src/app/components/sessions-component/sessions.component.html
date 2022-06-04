@@ -1,10 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<div clas="sessions">
+  <loader-content *ngIf="isLoading"></loader-content>
+  <ng-container *ngIf="!isLoading">
+    <filter></filter>
+    <div class="box">
+      <div class="table table-clickable">
+        <div class="row row-title">
+          <div class="col col-title col-short">
+            Id
+          </div>
+          <div class="col col-title">
+            Client
+          </div>
+          <div class="col col-title  col-wide">
+            Date & Time
+          </div>
+          <div class="col col-title  col-fill">
+            Notes
+          </div>
+          <div class="col col-title">
+            State
+          </div>
+          <div class="col col-title">
+            Actions
+          </div>
+        </div>
+        <div class="row" *ngFor="let session of sessions">
+          <div class="col col-short">{{session.id}}</div>
+          <div class="col" (click)="goToClient(session.clientIdRef[0])">{{session.clientName}}</div>
+          <div class="col col-wide">{{session.dateString}}</div>
+          <div class="col col-fill">{{session.notes}}</div>
+          <div class="col" [ngClass]="{'session-owed' : session.paymentState == SessionPaymentState.owed,
+                                       'session-payed' : session.paymentState == SessionPaymentState.payed,
+                                       'session-future' : session.isFuture}">
+            {{session.isFuture ? 'Future' : (session.paymentState == SessionPaymentState.owed ? 'Debt' : 'Payed')}}
+          </div>
+          <div class="col col-action-split">
+            <div class="action" *ngIf="!session.isFuture" (click)="onToggleSessionState(session)">
+              <i *ngIf="session.paymentState == SessionPaymentState.owed" class="fa-solid fa-coins"></i>
+              <i *ngIf="session.paymentState == SessionPaymentState.payed" class="fa-solid fa-rotate-left"></i>
+            </div>
+            <div class="action action-empty" *ngIf="session.isFuture">
+              &nbsp;
+            </div>
+            <div class="action" (click)="onDeleteSessionClicked(session)">
+              <i class="fa-solid fa-minus"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>
+

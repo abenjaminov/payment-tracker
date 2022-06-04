@@ -1,6 +1,6 @@
-import {ComponentService, getMonthName} from "../models";
-import {BoxNumberDisplayComponentData} from "../components/box-number-display/box-number-display.component";
-import {ApiService} from "./api.service";
+import {ComponentService, getMonthName} from "../../../models";
+import {BoxNumberDisplayComponentData} from "../box-number-display.component";
+import {ApiService} from "../../../services/api.service";
 import {Injectable} from "@angular/core";
 
 @Injectable()

@@ -1,37 +1,64 @@
 import {Injectable} from "@angular/core";
+import {ApiService} from "./api.service";
+import {AirTableEntity} from "../models";
 
-export class Trainer {
-  id: string;
+export interface GetClientsArgs {
+  filterId?: string;
+  filterText?: string;
+}
+
+export class Client implements AirTableEntity {
+  airTableId?: string;
+
+  id?: string;
   name: string;
   phoneNumber: string;
-  debt: number;
   basePayment: number;
+  debt: number;
+  isActive: boolean;
 }
 
 @Injectable({providedIn : 'root'})
-export class TrainerService {
-  isLoaded: boolean;
-  allTrainers : Array<Trainer>
+export class ClientService {
+  isLoaded: boolean = false;
+  allClients : Array<Client> = [];
+  selectedClient: Client;
 
-  async loadAllTrainers() : Promise<any> {
+  constructor(private apiService: ApiService) {
+  }
+
+  async loadAllClients() : Promise<any> {
     this.isLoaded = false;
 
-    this.allTrainers = [{
-      id: '204535710',
-      name: 'Asaf',
-      phoneNumber: '0525516232',
-      debt: 1000,
-      basePayment: 100
-    },{
-      id: 'a1db243a-edae-4389-b091-88aec13d02d2',
-      name: 'Tasha',
-      phoneNumber: '0528817232',
-      debt: 350,
-      basePayment: 175
-    }];
+    this.allClients = await this.apiService.get('clients');
 
     this.isLoaded = true;
 
     return Promise.resolve();
   }
+
+  async loadClient(id: string) {
+    const result = await this.getClientById(id);
+    this.selectedClient = result[0];
+  }
+
+  async saveClient(clientToAdd: Client) {
+    await this.apiService.post('clients', clientToAdd);
+  }
+
+  async getClientById(id: string): Promise<Client> {
+    let result = this.allClients.find(x => x.airTableId == id);
+
+    if (result) return result;
+
+    this.isLoaded = false;
+    const filter: GetClientsArgs = {
+      filterId : id
+    }
+    result = await this.apiService.get(`clients`, filter)
+    this.isLoaded = true;
+
+    return result;
+  }
+
 }

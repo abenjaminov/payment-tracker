@@ -1,0 +1,63 @@
+.loader-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes ldio-q6fyhclhgaj {
+  0% { transform: rotate(0) }
+  100% { transform: rotate(360deg) }
+}
+.ldio-q6fyhclhgaj div { box-sizing: border-box!important }
+.ldio-q6fyhclhgaj > div {
+  position: absolute;
+  width: 182.88px;
+  height: 182.88px;
+  top: 35.56px;
+  left: 35.56px;
+  border-radius: 50%;
+  border: 20.32px solid #000;
+  border-color: #474b60 transparent #474b60 transparent;
+  animation: ldio-q6fyhclhgaj 1s linear infinite;
+}
+.ldio-q6fyhclhgaj > div:nth-child(2) { border-color: transparent }
+.ldio-q6fyhclhgaj > div:nth-child(2) div {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform: rotate(45deg);
+}
+.ldio-q6fyhclhgaj > div:nth-child(2) div:before, .ldio-q6fyhclhgaj > div:nth-child(2) div:after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 20.32px;
+  height: 20.32px;
+  top: -20.32px;
+  left: 60.96px;
+  background: #474b60;
+  border-radius: 50%;
+  box-shadow: 0 162.56px 0 0 #474b60;
+}
+.ldio-q6fyhclhgaj > div:nth-child(2) div:after {
+  left: -20.32px;
+  top: 60.96px;
+  box-shadow: 162.56px 0 0 0 #474b60;
+}
+.loadingio-spinner-dual-ring-27qlkb1x0x5i {
+  width: 254px;
+  height: 254px;
+  display: inline-block;
+  overflow: hidden;
+  //background: rgba(NaN, NaN, NaN, 0);
+}
+.ldio-q6fyhclhgaj {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform: translateZ(0) scale(1);
+  backface-visibility: hidden;
+  transform-origin: 0 0; /* see note above */
+}
+.ldio-q6fyhclhgaj div { box-sizing: content-box; }

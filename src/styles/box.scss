@@ -1,0 +1,51 @@
+@import "mixins";
+
+.box {
+  background-color: white;
+  padding: 8px;
+  border-radius: 6px;
+  @include shadow();
+
+  &-number-display {
+
+    &:hover {
+      @include shadow-hover();
+      cursor: pointer;
+    }
+
+    &:active {
+      @include shadow();
+    }
+
+    margin-right: 20px;
+    height: 140px;
+    width: 140px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    position: relative;
+
+    .title {
+      font-weight: bold;
+      font-size: 18px;
+      height: 30px;
+    }
+
+    .content {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .number-display {
+        font-size: 26px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
+  }
+}

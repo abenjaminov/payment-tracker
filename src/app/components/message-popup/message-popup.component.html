@@ -1,10 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<div class="message-popup " [ngClass]="{'open' : isOpen, 'closed' : !isOpen}" (click)="closePopup()">
+  <div class="message box" (click)="preventClosePopup($event)">
+    <div class="message-content" [ngClass]="{'rtl' : !options.ltr}">
+      <div class="close"></div>
+      <div class="title">
+        {{options.title}}
+      </div>
+      <div class="content">
+        {{options.message}}
+      </div>
+      <div class="actions">
+        <div class="button" *ngFor="let action of options.actions" (click)="onActionClicked(action)"
+             [ngClass]="{'primary' : action.isPrimary}">
+          {{action.text}}
+        </div>
+      </div>
+    </div>
+    <div class="footer" [ngClass]="{'info' : options.type == MessagePopupType.info, 'error' : options.type == MessagePopupType.error}">
+      &nbsp;
+    </div>
+  </div>
+</div>

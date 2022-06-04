@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<div class="sidebar">
+  <div class="sidebar-top">
+
+  </div>
+  <div class="sidebar-actions">
+    <div class="sidebar-action" [ngClass]="{'selected' : action.isSelected}" *ngFor="let action of actions" (click)="onActionClicked(action)">
+      {{action.text}}
+    </div>
+  </div>
+</div>

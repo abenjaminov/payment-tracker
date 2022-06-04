@@ -1,16 +1,54 @@
-<div class="trainers box" *ngIf="trainerService.isLoaded">
-  <div class="table">
-    <div class="row row-title">
-      <div class="col col-title">Name</div>
-      <div class="col col-title">Phone Number</div>
-      <div class="col col-title">Payment</div>
-      <div class="col col-title">Debt</div>
+<div class="trainers ">
+  <loader-content *ngIf="isLoading"></loader-content>
+  <ng-container *ngIf="!isLoading">
+    <div class="table table-clickable box">
+      <div class="row row-title">
+        <div class="col col-title">Name</div>
+        <div class="col col-title col-fill">Phone Number</div>
+        <div class="col col-title col-fill">Payment</div>
+        <div class="col col-title col-fill">Debt</div>
+        <div class="col col-action">Actions</div>
+      </div>
+      <div class="row" *ngIf="clientToAdd">
+        <div class="col"><input type="text"  [(ngModel)]="clientToAdd.name"/></div>
+        <div class="col col-fill"><input type="text" [(ngModel)]="clientToAdd.phoneNumber"/></div>
+        <div class="col col-fill"><input type="number" [(ngModel)]="clientToAdd.basePayment"/></div>
+        <div class="col col-fill">--</div>
+        <div class="col col-action" (click)="onAddClientClicked($event)"><i class="fa-solid fa-plus"></i> Add</div>
+      </div>
+      <div class="row" *ngFor="let client of clientService.allClients" (click)="onClientClicked(client)">
+        <ng-container *ngIf="editedClient && client.airTableId == editedClient.airTableId">
+          <div class="col"><input type="text"  [(ngModel)]="client.name"/></div>
+          <div class="col col-fill"><input type="text" [(ngModel)]="client.phoneNumber"/></div>
+          <div class="col col-fill"><input type="number" [(ngModel)]="client.basePayment"/></div>
+          <div class="col col-fill">--</div>
+          <div class="col col-action" (click)="onSaveClientClicked($event, client)">
+            <div class="action" *ngIf="!isLoading">
+              <i class="fa-solid fa-floppy-disk"></i>
+            </div>
+            <div class="action" *ngIf="isLoading">
+              <i class="fa-solid fa-spinner spin"></i>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="!editedClient || client.airTableId != editedClient.airTableId">
+          <div class="col">{{client.name}}</div>
+          <div class="col col-fill">{{client.phoneNumber}}</div>
+          <div class="col col-fill">{{client.basePayment}}₪</div>
+          <div class="col col-fill">{{client.debt}}₪</div>
+          <div class="col col-action-split">
+            <div class="action" (click)="onEditClientClicked($event, client)">
+              <i class="fa-solid fa-pen"></i>
+            </div>
+            <div class="action" *ngIf="client.isActive">
+              <i class="fa-solid fa-ban"></i>
+            </div>
+            <div class="action" *ngIf="!client.isActive">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+          </div>
+        </ng-container>
+        </div>
     </div>
-    <div class="row" *ngFor="let trainer of trainerService.allTrainers">
-      <div class="col">{{trainer.name}}</div>
-      <div class="col">{{trainer.phoneNumber}}</div>
-      <div class="col">{{trainer.basePayment}}₪</div>
-      <div class="col">{{trainer.debt}}₪</div>
-    </div>
-  </div>
+  </ng-container>
 </div>

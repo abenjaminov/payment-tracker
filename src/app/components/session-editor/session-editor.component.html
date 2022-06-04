@@ -1,10 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+<div class="backdrop" [ngClass]="{'open' : isOpen, 'closed' : !isOpen}" (click)="closeEditor()">
+  <div class="editor box" *ngIf="editedSession" (click)="preventCloseEditor($event)">
+    <div class="title">
+      {{title}}
+    </div>
+    <div class="content">
+      <div class="input client-list" *ngIf="isCreate && clientService.allClients">
+        <span for="cars">Client</span>
+        <select name="cars" id="cars" [ngModel]="selectedClientAirTableId" (change)="onSelectedClientChanged($event)">
+          <option [value]="client.airTableId"
+                  *ngFor="let client of clientService.allClients">{{client.name}}</option>
+        </select>
+      </div>
+      <div class="input datetime">
+        <span>Date & Time</span>
+        <input type="datetime-local" required [ngModel]="editedSession.date | date:'yyyy-MM-ddTHH:mm'" (ngModelChange)="onSessionDateChanged($event)"/>
+      </div>
+      <div class="input payment">
+        <span>Payment</span>
+        <input type="number" pattern="\d*" required [(ngModel)]="editedSession.payment"/>
+      </div>
+      <div class="input notes">
+        <span>Notes</span>
+        <textarea [(ngModel)]="editedSession.notes"></textarea>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="button primary" (click)="onSaveSessionClicked()">
+        <span *ngIf="!isLoading">Save</span>
+        <i class="fa-solid fa-spinner spin" *ngIf="isLoading"></i>
+      </div>
+      <div class="button negative" *ngIf="!isCreate" (click)="onDeleteSessionClicked()">
+        Delete
+      </div>
+      <div class="button" (click)="closeEditor()">
+        Close
+      </div>
+    </div>
+  </div>
+</div>

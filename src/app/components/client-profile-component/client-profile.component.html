@@ -1,3 +1,30 @@
-<div class="trainer-profile">
-
+<div class="client-profile">
+  <loader-content *ngIf="isLoading"></loader-content>
+  <ng-container *ngIf="!isLoading">
+    <div class="client-details box" *ngIf="clientService.selectedClient">
+      <div class="detail">
+        <div class="label">Name : </div>
+        <div class="value">{{clientService.selectedClient.name}}</div>
+      </div>
+      <div class="detail">
+        <div class="label">Phone Number : </div>
+        <div class="value">{{clientService.selectedClient.phoneNumber}}</div>
+      </div>
+      <div class="detail">
+        <div class="label">Payment : </div>
+        <div class="value">{{clientService.selectedClient.basePayment}}₪</div>
+      </div>
+      <div class="detail">
+        <div class="label">Debt : </div>
+        <div class="value">{{clientService.selectedClient.debt}}₪</div>
+      </div>
+    </div>
+    <div class="client-details box" *ngIf="!clientService.selectedClient">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      No client found.
+    </div>
+    <div class="client-sessions" *ngIf="clientService.selectedClient">
+      <client-sessions [clientAirTableId]="this.clientId" [title]="'Sessions for ' + clientService.selectedClient.name"></client-sessions>
+    </div>
+  </ng-container>
 </div>
