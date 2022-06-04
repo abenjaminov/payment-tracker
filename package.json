@@ -1,6 +1,6 @@
 {
   "name": "payment_tracker_app",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "author": "Asaf Benjaminov",
   "description": "Track payments",
   "main": "app.js",
@@ -33,6 +33,7 @@
     "electron-winstaller": "^5.0.0",
     "rxjs": "~7.4.0",
     "tslib": "^2.3.0",
+    "update-electron-app": "^2.0.1",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {

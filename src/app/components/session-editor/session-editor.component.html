@@ -1,5 +1,6 @@
 <div class="backdrop" [ngClass]="{'open' : isOpen, 'closed' : !isOpen}" (click)="closeEditor()">
-  <div class="editor box" *ngIf="editedSession" (click)="preventCloseEditor($event)">
+  <div class="editor box" *ngIf="editedSession" (click)="preventCloseEditor($event)"
+       [ngClass]="{'debt-session' : !isCreate && editedSession.paymentState == SessionPaymentState.owed,'payed-session' : !isCreate && editedSession.paymentState == SessionPaymentState.payed}">
     <div class="title">
       {{title}}
     </div>
@@ -22,6 +23,15 @@
       <div class="input notes">
         <span>Notes</span>
         <textarea [(ngModel)]="editedSession.notes"></textarea>
+      </div>
+      <div class="input" *ngIf="!isCreate && !editedSession.isFuture">
+        <span>&nbsp;</span>
+        <div class="payment-state">
+          <div *ngIf="editedSession.paymentState == SessionPaymentState.owed" class="toggle-payment-state-text">Set as payed</div>
+          <div *ngIf="editedSession.paymentState == SessionPaymentState.payed" class="toggle-payment-state-text">Set as Debt</div>
+          <i *ngIf="editedSession.paymentState == SessionPaymentState.owed" class="fa-solid fa-coins toggle-payment-state" (click)="togglePaymentState()"></i>
+          <i *ngIf="editedSession.paymentState == SessionPaymentState.payed" class="fa-solid fa-rotate-left toggle-payment-state" (click)="togglePaymentState()"></i>
+        </div>
       </div>
     </div>
     <div class="footer">

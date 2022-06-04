@@ -1,4 +1,4 @@
-import {Component, Input} from "@angular/core";
+import {Component} from "@angular/core";
 import {SessionEditorArgs, SessionEditorComponentService} from "./session-editor.component.service";
 import {Subscription} from "rxjs";
 import {Session, SessionPaymentState, SessionsService} from "../../services/sessions.service";
@@ -10,6 +10,8 @@ import {Client, ClientService} from "../../services/client.service";
   styleUrls: ['session-editor.component.scss']
 })
 export class SessionEditorComponent {
+  SessionPaymentState = SessionPaymentState;
+
   isOpen: boolean = false;
   isLoading: boolean = false;
 
@@ -56,7 +58,7 @@ export class SessionEditorComponent {
     else {
       this.title = "Create new session";
       this.editedSession = {
-        date: new Date(Date.now()),
+        date: new Date(sessionEditorArgs.sessionDay.year,sessionEditorArgs.sessionDay.month,sessionEditorArgs.sessionDay.date),
         paymentState: SessionPaymentState.owed
       }
 
@@ -97,11 +99,15 @@ export class SessionEditorComponent {
     this.editedSession.payment = client.basePayment;
   }
 
-  onDeleteSessionClicked() {
+  async onDeleteSessionClicked() {
     this.isLoading = true;
-    this.sessionService.deleteSession(this.editedSession);
+    await this.sessionService.deleteSession(this.editedSession);
     this.isLoading = false
 
     this.closeEditor();
+  }
+
+  togglePaymentState() {
+    this.editedSession.paymentState = this.editedSession.paymentState == SessionPaymentState.owed ? SessionPaymentState.payed : SessionPaymentState.owed;
   }
 }

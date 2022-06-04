@@ -14,15 +14,20 @@
     border: 1px solid #474B60;
   }
 
+  &.primary {
+    border: 1px solid #474B60;
+
+    &:hover {
+      color: white;
+      background-color: #474B60;
+    }
+  }
+
   &:active {
     cursor: pointer;
     border: 1px solid transparent;
-    background-color: #474B60;
+    background-color: #5C6071;
     color:white;
-  }
-
-  &.primary {
-    border: 1px solid #E5E5E5;
   }
 
   &.negative {

@@ -24,6 +24,14 @@
     display: flex;
     flex-direction: column;
 
+    &.debt-session {
+      border: 3px solid red;
+    }
+
+    &.payed-session {
+      border: 3px solid lightgreen;
+    }
+
     .title {
       font-weight: bold;
       flex-basis: 30px;
@@ -45,6 +53,24 @@
         flex-direction: column;
         width: 48%;
         padding: 0 2% 0 0;
+
+        .payment-state {
+          display: flex;
+          flex-direction: row;
+
+          .toggle-payment-state-text {
+            width: 100px;
+          }
+
+          .toggle-payment-state {
+            margin-left: 5px;
+
+            &:hover {
+              color: #474B60;
+              cursor: pointer;
+            }
+          }
+        }
       }
     }
 
