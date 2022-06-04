@@ -1,75 +1,79 @@
-<div class="client-sessions box">
-  <div class="title" *ngIf="title">
-    {{title}}
-  </div>
-  <div class="sessions-list">
-    <div class="table table-bordered table-clickable">
-      <div class="row row-title">
-        <div class="col col-title col-wide">Date</div>
-        <div class="col col-title">Payment</div>
-        <div class="col col-fill col-title">Notes</div>
-        <div class="col col-title fill">State</div>
-        <div class="col col-title fill">Actions</div>
-      </div>
-      <div class="row" *ngIf="sessionToAdd">
-        <div class="col col-wide"><input type="datetime-local" #datePicker required [ngModel]="sessionToAdd.date | date:'yyyy-MM-ddTHH:mm'" (ngModelChange)="onSessionToAddDateChanged(sessionToAdd, $event)"/></div>
-        <div class="col"><input type="number" pattern="\d*" required [(ngModel)]="sessionToAdd.payment"/></div>
-        <div class="col col-fill"><input type="text" [(ngModel)]="sessionToAdd.notes"/></div>
-        <div class="col">--</div>
-
-        <div class="col col-action" (click)="onAddSessionClicked()">
-          <div class="action" *ngIf="!isLoading">
-            <i class="fa-solid fa-plus"></i> Add
-          </div>
-          <div class="action" *ngIf="isLoading">
-            <i class="fa-solid fa-spinner spin"></i>
-          </div>
+<div class="client-session-wrapper">
+  <div class="client-sessions box">
+    <div class="title" *ngIf="title">
+      {{title}}
+    </div>
+    <div class="sessions-list">
+      <div class="table table-bordered table-clickable">
+        <div class="row row-title">
+          <div class="col col-title col-wide">Date</div>
+          <div class="col col-title">Payment</div>
+          <div class="col col-fill col-title">Notes</div>
+          <div class="col col-title fill">State</div>
+          <div class="col col-title fill">Actions</div>
         </div>
-      </div>
-      <ng-container *ngFor="let session of sessions">
-        <div class="row" *ngIf="editedSession && editedSession.airTableId === session.airTableId">
-          <div class="col col-wide"><input type="datetime-local" required [ngModel]="session.date | date:'yyyy-MM-ddTHH:mm'" (ngModelChange)="onSessionToAddDateChanged(session, $event)"/></div>
-          <div class="col"><input type="number" pattern="\d*" required [(ngModel)]="session.payment"/></div>
-          <div class="col col-fill"><input type="text" [(ngModel)]="session.notes"/></div>
+        <div class="row" *ngIf="sessionToAdd">
+          <div class="col col-wide"><input type="datetime-local" #datePicker required [ngModel]="sessionToAdd.date | date:'yyyy-MM-ddTHH:mm'" (ngModelChange)="onSessionToAddDateChanged(sessionToAdd, $event)"/></div>
+          <div class="col"><input type="number" pattern="\d*" required [(ngModel)]="sessionToAdd.payment"/></div>
+          <div class="col col-fill"><input type="text" [(ngModel)]="sessionToAdd.notes"/></div>
           <div class="col">--</div>
-          <div class="col col-action" (click)="onSaveSessionClicked(session)">
+
+          <div class="col col-action" (click)="onAddSessionClicked()">
             <div class="action" *ngIf="!isLoading">
-              <i class="fa-solid fa-floppy-disk"></i>
+              <i class="fa-solid fa-plus"></i> Add
             </div>
             <div class="action" *ngIf="isLoading">
               <i class="fa-solid fa-spinner spin"></i>
             </div>
           </div>
         </div>
-        <div class="row" *ngIf="!editedSession || editedSession.airTableId != session.airTableId">
-          <div class="col col-wide">{{session.dateString}}</div>
-          <div class="col">{{session.payment}}₪</div>
-          <div class="col col-fill">{{session.notes}}</div>
-          <div class="col" [ngClass]="{'session-owed' : session.paymentState == SessionPaymentState.owed,
+        <ng-container *ngFor="let session of sessions">
+          <div class="row" *ngIf="editedSession && editedSession.airTableId === session.airTableId">
+            <div class="col col-wide"><input type="datetime-local" required [ngModel]="session.date | date:'yyyy-MM-ddTHH:mm'" (ngModelChange)="onSessionToAddDateChanged(session, $event)"/></div>
+            <div class="col"><input type="number" pattern="\d*" required [(ngModel)]="session.payment"/></div>
+            <div class="col col-fill"><input type="text" [(ngModel)]="session.notes"/></div>
+            <div class="col">--</div>
+            <div class="col col-action" (click)="onSaveSessionClicked(session)">
+              <div class="action" *ngIf="!isLoading">
+                <i class="fa-solid fa-floppy-disk"></i>
+              </div>
+              <div class="action" *ngIf="isLoading">
+                <i class="fa-solid fa-spinner spin"></i>
+              </div>
+            </div>
+          </div>
+          <div class="row" *ngIf="!editedSession || editedSession.airTableId != session.airTableId">
+            <div class="col col-wide">{{session.dateString}}</div>
+            <div class="col">{{session.payment}}₪</div>
+            <div class="col col-fill">{{session.notes}}</div>
+            <div class="col" [ngClass]="{'session-owed' : session.paymentState == SessionPaymentState.owed,
                                        'session-payed' : session.paymentState == SessionPaymentState.payed,
                                        'session-future' : session.isFuture}">
-            {{session.isFuture ? 'Future' : (session.paymentState == SessionPaymentState.owed ? 'Debt' : 'Payed')}}
+              {{session.isFuture ? 'Future' : (session.paymentState == SessionPaymentState.owed ? 'Debt' : 'Payed')}}
+            </div>
+            <div class="col col-action-split">
+              <div class="action" *ngIf="!session.isFuture && !isLoading" (click)="onToggleSessionState(session)">
+                <i *ngIf="session.paymentState == SessionPaymentState.owed" class="fa-solid fa-coins"></i>
+                <i *ngIf="session.paymentState == SessionPaymentState.payed" class="fa-solid fa-rotate-left"></i>
+              </div>
+              <div class="action action-empty" *ngIf="!isLoading && session.isFuture">
+                &nbsp;
+              </div>
+              <div class="action" *ngIf="isLoading">
+                <i class="fa-solid fa-spinner spin"></i>
+              </div>
+              <div class="action" (click)="onEditSessionClicked(session)" *ngIf="!isLoading">
+                <i class="fa-solid fa-pen"></i>
+              </div>
+              <div class="action" (click)="onDeleteSessionClicked(session)" *ngIf="!isLoading">
+                <i class="fa-solid fa-minus"></i>
+              </div>
+            </div>
           </div>
-          <div class="col col-action-split">
-            <div class="action" *ngIf="!session.isFuture && !isLoading" (click)="onToggleSessionState(session)">
-              <i *ngIf="session.paymentState == SessionPaymentState.owed" class="fa-solid fa-coins"></i>
-              <i *ngIf="session.paymentState == SessionPaymentState.payed" class="fa-solid fa-rotate-left"></i>
-            </div>
-            <div class="action action-empty" *ngIf="!isLoading && session.isFuture">
-              &nbsp;
-            </div>
-            <div class="action" *ngIf="isLoading">
-              <i class="fa-solid fa-spinner spin"></i>
-            </div>
-            <div class="action" (click)="onEditSessionClicked(session)" *ngIf="!isLoading">
-              <i class="fa-solid fa-pen"></i>
-            </div>
-            <div class="action" (click)="onDeleteSessionClicked(session)" *ngIf="!isLoading">
-              <i class="fa-solid fa-minus"></i>
-            </div>
-          </div>
-        </div>
-      </ng-container>
+        </ng-container>
+      </div>
     </div>
   </div>
 </div>
+
+

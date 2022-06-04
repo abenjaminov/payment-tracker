@@ -27,7 +27,7 @@
         </div>
       </div>
       <div class="day-sessions">
-        <div class="day-session" *ngFor="let session of day.sessions" (click)="onSessionClicked(day, session)"
+        <div class="day-session" *ngFor="let session of day.firstThreeSessions" (click)="onSessionClicked(day, session)"
              [ngClass]="{'debt' : session.paymentState == SessionPaymentState.owed,
                          'payed' : session.paymentState == SessionPaymentState.payed,
                          'future' : session.isFuture}">
@@ -37,6 +37,9 @@
           <div class="client-info">
             {{session.clientName}}
           </div>
+        </div>
+        <div class="day-session more" *ngIf="day.sessions && day.sessions.length > 3">
+          More...
         </div>
       </div>
     </div>

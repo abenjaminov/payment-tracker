@@ -74,4 +74,5 @@ export class SessionDay {
   isToday: boolean;
   isNotDisplayedMonth: boolean;
   sessions?: Array<Session>;
+  firstThreeSessions?: Array<Session>;
 }

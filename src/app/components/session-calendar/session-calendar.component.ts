@@ -95,6 +95,7 @@ export class SessionCalendarComponent {
       for(let j = 0; j < this.sessionDays[i].length; j++) {
         const day = this.sessionDays[i][j];
         day.sessions = this.getSessionsForDate(day.year, day.month, day.date);
+        day.firstThreeSessions = day.sessions.slice(0,3);
       }
     }
 

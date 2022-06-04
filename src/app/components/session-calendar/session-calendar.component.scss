@@ -66,7 +66,7 @@
     }
 
     &.day {
-      height: 100px;
+      height: 118px;
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
@@ -136,9 +136,9 @@
           color:white;
           margin-top: 2px;
           font-size: 12px;
-          height: 18px;
+          height: 20px;
           width: calc(100% - 6px);
-          font-weight: bold;
+
 
           .client-info {
             padding: 3px 8px;
@@ -147,7 +147,8 @@
           &:hover {
             border: 1px solid black;
             cursor:pointer;
-            height: 16px;
+            font-weight: bold;
+            height: 18px;
           }
 
           &.payed {
@@ -163,6 +164,12 @@
           &.future {
             background-color: #474B60;
             color:white;
+          }
+
+          &.more {
+            color: #474B60;
+            background-color: #F5F5F5;
+            justify-content: center;
           }
         }
       }

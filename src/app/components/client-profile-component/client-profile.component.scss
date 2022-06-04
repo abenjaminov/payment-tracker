@@ -1,9 +1,12 @@
 .client-profile {
   display: flex;
   flex-direction: column;
+  height: 100%;
 
   .client-details {
     margin-bottom: 10px;
+    flex-basis: 120px;
+
     .detail {
       margin-bottom: 8px;
       display: flex;
@@ -14,5 +17,9 @@
         font-weight: bold;
       }
     }
+  }
+
+  .client-sessions {
+    flex: 1;
   }
 }
