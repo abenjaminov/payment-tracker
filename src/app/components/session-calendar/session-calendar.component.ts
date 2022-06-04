@@ -3,6 +3,7 @@ import {dayNames, getMonths, Month, SessionDay} from "../../models";
 import {Session, SessionPaymentState, SessionsService} from "../../services/sessions.service";
 import {SessionEditorComponentService} from "../session-editor/session-editor.component.service";
 import {Subscription} from "rxjs";
+import {MessagePopupComponentService, MessagePopupType} from "../message-popup/message-popup.component.service";
 
 @Component({
   selector: 'session-calendar',
@@ -29,7 +30,7 @@ export class SessionCalendarComponent {
 
   closeEditorSub: Subscription;
 
-  constructor(private sessionService: SessionsService, private sessionEditorComponentService: SessionEditorComponentService) {
+  constructor(private sessionService: SessionsService, private sessionEditorComponentService: SessionEditorComponentService, private messageService: MessagePopupComponentService) {
     this.closeEditorSub = this.sessionEditorComponentService.onCloseEditor.subscribe(() => {
       this.update();
     })
@@ -187,5 +188,18 @@ export class SessionCalendarComponent {
     const year = this.currentMonth.nextMonthYear;
 
     this.init(month, year);
+  }
+
+  onMoreClicked() {
+    this.messageService.showMessage({
+      title: "אופס",
+      message: "זה עדיין לא עובד, ממש בקרוב.",
+      actions : [{
+        isClose: true,
+        isPrimary: true,
+        text: "סבבה"
+      }],
+      type: MessagePopupType.info
+    })
   }
 }

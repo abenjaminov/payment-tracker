@@ -38,7 +38,7 @@
             {{session.clientName}}
           </div>
         </div>
-        <div class="day-session more" *ngIf="day.sessions && day.sessions.length > 3">
+        <div class="day-session more" *ngIf="day.sessions && day.sessions.length > 3" (click)="onMoreClicked()">
           More...
         </div>
       </div>
