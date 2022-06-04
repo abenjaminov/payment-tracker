@@ -39,7 +39,7 @@ export class ClientService {
 
   async loadClient(id: string) {
     const result = await this.getClientById(id);
-    this.selectedClient = result[0];
+    this.selectedClient = result;
   }
 
   async saveClient(clientToAdd: Client) {
