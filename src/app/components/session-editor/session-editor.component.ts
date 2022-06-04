@@ -3,6 +3,8 @@ import {SessionEditorArgs, SessionEditorComponentService} from "./session-editor
 import {Subscription} from "rxjs";
 import {Session, SessionPaymentState, SessionsService} from "../../services/sessions.service";
 import {Client, ClientService} from "../../services/client.service";
+import dayjs from "dayjs";
+import {MessagePopupComponentService, MessagePopupType} from "../message-popup/message-popup.component.service";
 
 @Component({
   selector: 'session-editor',
@@ -19,6 +21,7 @@ export class SessionEditorComponent {
   closeSub: Subscription;
 
   editedSession: Session;
+  originalEditedSession: Session;
 
   isCreate: boolean;
   title: string;
@@ -28,7 +31,8 @@ export class SessionEditorComponent {
 
   constructor(private sessionEditorComponentService: SessionEditorComponentService,
               private sessionService: SessionsService,
-              public clientService: ClientService) {
+              public clientService: ClientService,
+              private messageService: MessagePopupComponentService) {
     this.showSub = sessionEditorComponentService.onShowEditor.subscribe((args) => {
       this.showEditor(args);
     })
@@ -56,6 +60,7 @@ export class SessionEditorComponent {
       this.title = `Session with ${this.editedSession.clientName} at ${this.editedSession.dateString}`;
     }
     else {
+      this.selectedClientAirTableId = undefined;
       this.title = "Create new session";
       this.editedSession = {
         date: new Date(sessionEditorArgs.sessionDay.year,sessionEditorArgs.sessionDay.month,sessionEditorArgs.sessionDay.date),
@@ -66,10 +71,54 @@ export class SessionEditorComponent {
       await this.clientService.loadAllClients()
       this.isLoading = false;
     }
+
+    this.originalEditedSession = Object.assign({}, this.editedSession);
+  }
+
+  areChangesMade() {
+    const isClientEqual = this.originalEditedSession.clientIdRef === this.editedSession.clientIdRef;
+    const isPaymentEqual = this.originalEditedSession.payment === this.editedSession.payment;
+    const isPaymentStateEqual = this.originalEditedSession.paymentState === this.editedSession.paymentState;
+    const isNotesEqual = this.originalEditedSession.notes === this.editedSession.notes;
+    const isDateEqual = dayjs(this.originalEditedSession.date).isSame(this.editedSession.date);
+
+    return !(isClientEqual && isPaymentEqual && isPaymentStateEqual && isNotesEqual && isDateEqual);
   }
 
   closeEditor() {
-    this.sessionEditorComponentService.closeEditor();
+    const areChangesMade = this.areChangesMade();
+
+    if(!areChangesMade) {
+      this.sessionEditorComponentService.closeEditor();
+    }
+    else {
+      this.messageService.showMessage({
+        title: 'התבצעו שינויים',
+        message: 'בטוח רוצה לסגור?',
+        actions: [{
+          isClose: true,
+          action: () => {
+            this.sessionEditorComponentService.closeEditor();
+          },
+          text: "סגור בלי לשמור",
+          isPrimary: false
+        },{
+          isClose: true,
+          action: () => {
+            this.onSaveSessionClicked();
+          },
+          text: "סגור ושמור",
+          isPrimary: false
+        }, {
+          isClose: true,
+          text: 'השאר',
+          isPrimary: true
+        }],
+        type: MessagePopupType.info
+      })
+    }
+
+
   }
 
   onSessionDateChanged($event: any) {
@@ -90,7 +139,7 @@ export class SessionEditorComponent {
     await this.sessionService.saveSession(this.editedSession)
     this.isLoading = false;
 
-    this.closeEditor();
+    this.sessionEditorComponentService.closeEditor();
   }
 
   async onSelectedClientChanged($event) {

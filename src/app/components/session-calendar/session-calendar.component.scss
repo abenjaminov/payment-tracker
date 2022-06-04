@@ -138,7 +138,7 @@
           font-size: 12px;
           height: 20px;
           width: calc(100% - 6px);
-
+          font-weight: bold;
 
           .client-info {
             padding: 3px 8px;
@@ -147,7 +147,7 @@
           &:hover {
             border: 1px solid black;
             cursor:pointer;
-            font-weight: bold;
+
             height: 18px;
           }
 
@@ -168,7 +168,7 @@
 
           &.more {
             color: #474B60;
-            background-color: #F5F5F5;
+            background-color: lightgrey;
             justify-content: center;
           }
         }
