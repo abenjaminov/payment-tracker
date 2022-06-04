@@ -6,14 +6,10 @@
   "main": "app.js",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "start-electron": "set APP_DEV=true && electron .",
+    "config": "ts-node set-env.ts",
+    "start": "npm run config && ng serve",
     "build": "ng build",
-    "start-dev": "concurrently \"ng serve\" \"set APP_DEV=true && electron .\"",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "package": "electron-forge package",
-    "make": "electron-forge make"
   },
   "private": true,
   "dependencies": {
@@ -27,11 +23,15 @@
     "@angular/router": "~13.1.0",
     "@fortawesome/fontawesome-free": "^6.1.1",
     "airtable": "^0.11.4",
+    "colors": "^1.4.0",
     "dayjs": "^1.11.2",
+    "dotenv": "^16.0.1",
     "electron-squirrel-startup": "^1.0.0",
     "electron-unhandled": "^4.0.1",
     "electron-winstaller": "^5.0.0",
+    "fs": "^0.0.1-security",
     "rxjs": "~7.4.0",
+    "ts-node": "^10.8.1",
     "tslib": "^2.3.0",
     "update-electron-app": "^2.0.1",
     "zone.js": "~0.11.4"
