@@ -1,3 +1,42 @@
+.session-calendar-header {
+  display: flex;
+  height: 50px;
+  margin-bottom: 10px;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 24px;
+
+  .title {
+    font-weight: bold;
+    font-size: 30px;
+  }
+
+  .month-change {
+    height: 100%;
+    display: flex;
+    align-items: center;
+
+    &:hover {
+      cursor: pointer;
+      color: #474B60;
+    }
+
+    &.previous-month {
+      padding-right: 10px;
+      &:hover {
+        border-right: 1px solid black;
+      }
+    }
+
+    &.next-month {
+      padding-left: 10px;
+      &:hover {
+        border-left: 1px solid black;
+      }
+    }
+  }
+}
+
 .sessions-calendar {
   display: flex;
   flex-direction: column;

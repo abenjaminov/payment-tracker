@@ -1,4 +1,15 @@
 <loader-content *ngIf="isLoading"></loader-content>
+<div class="session-calendar-header box">
+  <div class="month-change previous-month" (click)="onPreviousMonthClicked()">
+    <i class="fa fa-chevron-left"></i>
+  </div>
+  <div class="title">
+    {{currentMonth.monthName}}
+  </div>
+  <div class="month-change next-month" (click)="onNextMonthClicked()">
+    <i class="fa fa-chevron-right"></i>
+  </div>
+</div>
 <div class="sessions-calendar box">
   <div class="day-header row">
     <div *ngFor="let dayName of dayNames" class="col">

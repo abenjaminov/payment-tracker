@@ -41,8 +41,12 @@ export class SessionCalendarComponent {
 
   ngOnInit() {
     const today = new Date();
-    this.month = today.getMonth();
-    this.year = today.getFullYear();
+    this.init(today.getMonth(), today.getFullYear());
+  }
+
+  init(month, year) {
+    this.month = month;
+    this.year = year;
     this.months = getMonths(this.year);
 
     this.update();
@@ -168,5 +172,19 @@ export class SessionCalendarComponent {
     }
 
     await this.updateSessions();
+  }
+
+  onPreviousMonthClicked() {
+    const month = this.currentMonth.previousMonth;
+    const year = this.currentMonth.previousMonthYear;
+
+    this.init(month, year);
+  }
+
+  onNextMonthClicked() {
+    const month = this.currentMonth.nextMonth;
+    const year = this.currentMonth.nextMonthYear;
+
+    this.init(month, year);
   }
 }

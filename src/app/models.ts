@@ -20,6 +20,7 @@ export class Month {
   previousMonthYear: number;
   previousMonth: number;
 
+  monthName: string;
 
   month: number;
   year: number;
@@ -48,6 +49,7 @@ export const getMonths = (year) => {
       name: monthNames[i],
       year,
       numberOfDays,
+      monthName: getMonthName(i),
       firstDayOfTheMonth : new Date(year, i, 1).getDay(),
       lastDayOfTheMonth : new Date(year, i, numberOfDays).getDay()
     })
