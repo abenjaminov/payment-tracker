@@ -11,8 +11,15 @@ import dayjs from "dayjs";
 export interface GetSessionArgs extends GetPagedArgs{
   filterClientId?: string;
   filterMonth?: number;
+  filterPaymentMonth?: number;
+  filterPaymentYear?: number;
   filterPaymentState?: SessionPaymentState
   filterText?: string;
+}
+
+export enum SessionPaymentStateServer {
+  owed = 'owed',
+  payed = 'payed'
 }
 
 export enum SessionPaymentState {

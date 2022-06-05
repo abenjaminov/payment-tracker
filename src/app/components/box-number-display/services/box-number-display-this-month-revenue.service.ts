@@ -4,7 +4,7 @@ import {ApiService} from "../../../services/api.service";
 import {Injectable} from "@angular/core";
 
 @Injectable()
-export class BoxNumberDisplayMonthlyRevenueService extends ComponentService {
+export class BoxNumberDisplayThisMonthRevenueService extends ComponentService {
   _isLoading: boolean = true;
 
   constructor(private apiService: ApiService) {
@@ -13,7 +13,8 @@ export class BoxNumberDisplayMonthlyRevenueService extends ComponentService {
 
   async getComponentData() : Promise<BoxNumberDisplayComponentData> {
     this._isLoading = true;
-    let monthlyRevenue = await this.apiService.get('monthly-revenue');
+    let monthlyRevenue = await this.apiService.get('this-month-revenue');
+
 
     this._isLoading = false;
 

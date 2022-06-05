@@ -9,7 +9,6 @@ export class DashboardService {
   totalFutureRevenue
 
 
-
   constructor(private apiService: ApiService) {
   }
 

@@ -41,7 +41,7 @@ export class ClientSessionsComponent {
 
     this.initSessionToAdd()
 
-    await this.pagingService.load(PagedEntityNames.clients, 20);
+    await this.pagingService.load(PagedEntityNames.clients, 15);
 
     this.sessions = await this.sessionsService.getSessions({filterClientId: this.clientService.selectedClient.id});
   }

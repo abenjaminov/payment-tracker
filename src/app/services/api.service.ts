@@ -1,19 +1,20 @@
 import {Injectable} from "@angular/core";
 import {Api} from "./api";
+import {CacheService} from "./cache";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
 
-  constructor(private api: Api) {
+  constructor(private api: Api, public cache: CacheService) {
     this.api.configureEndpoints();
   }
 
   async get(url: string, data: any = null) {
     const endpoint = this.api.endpoints.find(x => x.type == 'get' && x.url === url);
     if(endpoint) {
-      const result = await endpoint.action(data);
+      const result = await endpoint.action(this, data);
       return result;
     }
   }
@@ -21,7 +22,7 @@ export class ApiService {
   async post(url, data) {
     const endpoint = this.api.endpoints.find(x => x.type == 'post' && x.url === url);
     if(endpoint) {
-      const result = await endpoint.action(data);
+      const result = await endpoint.action(this, data);
       return result;
     }
   }
@@ -29,10 +30,8 @@ export class ApiService {
   async delete(url, id) {
     const endpoint = this.api.endpoints.find(x => x.type == 'delete' && x.url === url);
     if(endpoint) {
-      const result = await endpoint.action(id);
+      const result = await endpoint.action(this, id);
       return result;
     }
-
-    return Promise.resolve();
   }
 }

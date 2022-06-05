@@ -81,3 +81,8 @@ export interface GetPagedArgs {
   page?: number;
   pageSize?: number;
 }
+
+export interface GetMonthlyRevenueArgs {
+  month: number;
+  year: number;
+}

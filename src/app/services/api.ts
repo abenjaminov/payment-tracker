@@ -4,8 +4,21 @@ import {Injectable} from "@angular/core";
 import {AirtableBase} from "airtable/lib/airtable_base";
 import {FieldSet, Records, Table} from "airtable";
 import {Client, GetClientsArgs} from "./client.service";
-import {GetSessionArgs, Session, SessionPaymentState} from "./sessions.service";
-import {AirTableEntity} from "../models";
+import {GetSessionArgs, Session, SessionPaymentState, SessionPaymentStateServer} from "./sessions.service";
+import {AirTableEntity, GetMonthlyRevenueArgs} from "../models";
+import {ApiService} from "./api.service";
+import {CacheUrlGroup} from "./cache";
+
+enum CacheUrlGroupKey {
+  sessionsSaved
+}
+
+let cacheGroups: { [ key: number] : CacheUrlGroup;} = {
+  0 : {
+    key: CacheUrlGroupKey.sessionsSaved,
+    cacheKeys : ['monthly-revenue', 'this-month-revenue']
+  }
+}
 
 export class GetArgs {
   page: number;
@@ -112,7 +125,7 @@ export class Api {
   configureEndpoints() {
     this.endpoints = [];
     this.endpoints.push({url: 'clients',type: 'get',
-      action: async (filter: GetClientsArgs) => {
+      action: async (apiService: ApiService, filter: GetClientsArgs) => {
         //this.fixClients()
 
         let pageSize = filter && filter.pageSize ? filter.pageSize : 100;
@@ -149,7 +162,7 @@ export class Api {
         return result
       }
     },{ url: 'sessions', type: 'get',
-      action : async (filter: GetSessionArgs) => {
+      action : async (apiService: ApiService, filter: GetSessionArgs) => {
         let filterFormula = '';
 
         let pageSize = filter && filter.pageSize ? filter.pageSize : 100;
@@ -157,8 +170,13 @@ export class Api {
         if(filter) {
           const conditions = [];
 
-          if(filter.filterMonth) {
+          if(filter.filterMonth !== undefined) {
             conditions.push(`{month} = ${filter.filterMonth + 1}`);
+          }
+
+          if(filter.filterPaymentYear && filter.filterPaymentMonth !== undefined) {
+            conditions.push(`{paymentMonth} = ${filter.filterPaymentMonth + 1}`);
+            conditions.push(`{paymentYear} = ${filter.filterPaymentYear}`);
           }
 
           if(filter.filterClientId) {
@@ -192,9 +210,12 @@ export class Api {
 
         return result;
       }
-    },{url: 'monthly-revenue', type: 'get',
-      action: async () => {
-        // Update sessions
+    },{url: 'this-month-revenue', type: 'get',
+      action: async (apiService: ApiService) => {
+        const cacheKey = `this-month-revenue;${new Date().getMonth()}`;
+        let revenue = apiService.cache.getData(cacheKey);
+
+        if(revenue !== undefined) return revenue;
 
         const selectResult = await this.queriesTable.select({
           view: 'Grid view',
@@ -203,15 +224,42 @@ export class Api {
 
         let result = this.getViewObject(selectResult);
 
-        return result[0]['thisMonthRevenue'];
+        revenue = result[0]['thisMonthRevenue'];
+
+        apiService.cache.cacheData(cacheKey, revenue);
+
+        return revenue;
       }
-    },{url: 'debt', type: 'get',
-      action: async (month : number) => {
+    },{ url: 'monthly-revenue', type: 'get',
+        action: async (apiService: ApiService, args : GetMonthlyRevenueArgs) => {
+          const cacheKey = `monthly-revenue;${args.month};${args.year}`;
+          let revenue = apiService.cache.getData(cacheKey);
+
+          if(revenue !== undefined) return revenue;
+
+          const getSessionArgs: GetSessionArgs = {
+            filterPaymentMonth: args.month,
+            filterPaymentYear: args.year
+          };
+          let sessionsInMonth: Array<any> = await apiService.get('sessions', getSessionArgs);
+
+          revenue = sessionsInMonth.reduce((accumulator, curr) => {
+              if(curr.paymentState == SessionPaymentStateServer.payed)
+                return accumulator + curr.payment
+              else {
+                return accumulator;
+              }
+          }, 0);
+
+          apiService.cache.cacheData(cacheKey, revenue);
+
+          return revenue;
+        }
+      },
+      {url: 'debt', type: 'get',
+      action: async (apiService: ApiService) => {
         // Update sessions
         let filterFormula = '';
-        if(month) {
-          filterFormula = `{paymentMonth} = ${month}`;
-        }
 
         const selectResult = await this.queriesTable.select({
           view: 'Grid view',
@@ -226,7 +274,7 @@ export class Api {
     },{
       url: 'future-revenue',
       type: 'get',
-      action: async () => {
+      action: async (apiService: ApiService) => {
         // Update sessions
 
         const selectResult = await this.queriesTable.select({
@@ -239,7 +287,7 @@ export class Api {
         return result[0]['futureRevenue'];
       }
     },{ url: 'sessions', type: 'post',
-      action: async (session: Session) => {
+      action: async (apiService: ApiService, session: Session) => {
         if(session.airTableId) {
           await this.sessionsTable.destroy(session.airTableId);
         }
@@ -261,10 +309,10 @@ export class Api {
 
         await this.sessionsTable.create([newSession])
 
-
+        apiService.cache.clearGroup(cacheGroups[CacheUrlGroupKey.sessionsSaved])
       }
     },{ url: 'clients', type: 'post',
-      action: async (client: Client) => {
+      action: async (apiService: ApiService, client: Client) => {
         if(client.airTableId) {
           await this.clientsTable.destroy(client.airTableId);
         }
@@ -287,11 +335,11 @@ export class Api {
         await this.clientsTable.create([newClient])
       }
     }, { url: 'sessions', type: 'delete',
-      action: async (id: string) => {
+      action: async (apiService: ApiService, id: string) => {
         await this.sessionsTable.destroy(id);
       }
     }, { url: 'count', type: 'get',
-      action: async (entityName: string) => {
+      action: async (apiService: ApiService, entityName: string) => {
         const fieldName = `${entityName}-count`
 
         const selectResult = await this.queriesTable.select({
