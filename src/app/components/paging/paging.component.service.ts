@@ -3,7 +3,8 @@ import {ApiService} from "../../services/api.service";
 import {ReplaySubject} from "rxjs";
 
 export enum PagedEntityNames {
-  sessions= 'sessions'
+  sessions= 'sessions',
+  clients = 'clients'
 }
 
 @Injectable()

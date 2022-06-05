@@ -23,7 +23,7 @@
       <i class="fa-solid fa-triangle-exclamation"></i>
       No client found.
     </div>
-    <div class="client-sessions" *ngIf="clientService.selectedClient">
+    <div class="client-sessions-container" *ngIf="clientService.selectedClient">
       <client-sessions [clientAirTableId]="this.clientId" [title]="'Sessions for ' + clientService.selectedClient.name"></client-sessions>
     </div>
   </ng-container>

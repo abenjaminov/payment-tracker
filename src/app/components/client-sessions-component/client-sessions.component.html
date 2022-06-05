@@ -1,5 +1,5 @@
-<div class="client-session-wrapper">
-  <div class="client-sessions box">
+<div class="client-sessions">
+  <div class="sessions-list-container box">
     <div class="title" *ngIf="title">
       {{title}}
     </div>
@@ -27,7 +27,7 @@
             </div>
           </div>
         </div>
-        <ng-container *ngFor="let session of sessions">
+        <div *ngFor="let session of sessions">
           <div class="row" *ngIf="editedSession && editedSession.airTableId === session.airTableId">
             <div class="col col-wide"><input type="datetime-local" required [ngModel]="session.date | date:'yyyy-MM-ddTHH:mm'" (ngModelChange)="onSessionToAddDateChanged(session, $event)"/></div>
             <div class="col"><input type="number" pattern="\d*" required [(ngModel)]="session.payment"/></div>
@@ -70,10 +70,14 @@
               </div>
             </div>
           </div>
-        </ng-container>
+        </div>
       </div>
     </div>
   </div>
+  <div class="paging">
+    <paging></paging>
+  </div>
+
 </div>
 
 

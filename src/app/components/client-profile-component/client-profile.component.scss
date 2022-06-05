@@ -19,7 +19,8 @@
     }
   }
 
-  .client-sessions {
+  .client-sessions-container {
     flex: 1;
+    max-height: calc(100% - 150px);
   }
 }

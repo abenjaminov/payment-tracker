@@ -3,11 +3,13 @@ import {ClientService} from "../../services/client.service";
 import {Session, SessionPaymentState, SessionsService} from "../../services/sessions.service";
 import {MessagePopupComponentService, MessagePopupType} from "../message-popup/message-popup.component.service";
 import {systemMessages} from "../../../messages";
+import {PagedEntityNames, PagingComponentService} from "../paging/paging.component.service";
 
 @Component({
   selector: 'client-sessions',
   templateUrl: 'client-sessions.component.html',
-  styleUrls: ['client-sessions.component.scss']
+  styleUrls: ['client-sessions.component.scss'],
+  providers: [PagingComponentService]
 })
 export class ClientSessionsComponent {
   @Input() clientAirTableId: string;
@@ -20,7 +22,14 @@ export class ClientSessionsComponent {
 
   editedSession: Session;
 
-  constructor(public clientService: ClientService, public sessionsService: SessionsService, private messageService: MessagePopupComponentService) {
+  constructor(public clientService: ClientService, private pagingService: PagingComponentService,
+              public sessionsService: SessionsService, private messageService: MessagePopupComponentService) {
+
+    pagingService.onPageChange.subscribe(async () => {
+      this.isLoading = true;
+      await this.init();
+      this.isLoading = false;
+    })
   }
 
   async ngOnInit() {
@@ -31,6 +40,8 @@ export class ClientSessionsComponent {
     await this.clientService.loadClient(this.clientAirTableId);
 
     this.initSessionToAdd()
+
+    await this.pagingService.load(PagedEntityNames.clients, 20);
 
     this.sessions = await this.sessionsService.getSessions({filterClientId: this.clientService.selectedClient.id});
   }

@@ -1,8 +1,12 @@
-.client-sessions-wrapper {
+.client-sessions {
   height: 100%;
+  display: flex;
+  flex-direction: column;
 
-  .client-sessions {
-    max-height: 100%;
+  .sessions-list-container {
+
+    max-height: calc(100% - 60px);
+    overflow: hidden;
 
     .title {
       font-weight: bold;
@@ -11,9 +15,14 @@
     }
 
     .sessions-list {
+      height: 100%;
       overflow: scroll;
-
       &::-webkit-scrollbar { width: 0 !important; height: 0!important; }
     }
+  }
+
+  .paging {
+    flex-basis: 30px;
+    margin-top: 8px;
   }
 }
