@@ -39,6 +39,7 @@ export class Session implements AirTableEntity {
   notes?:string;
   paymentState: SessionPaymentState;
   datePayed?: Date;
+  datePayedString?: string;
   isFuture?: boolean;
   clientName?: string;
 }
@@ -94,6 +95,13 @@ export class SessionsService {
   fixSessions(sessions: Array<Session>) {
     for(let session of sessions) {
       session.date = new Date(session.date);
+      session.datePayed = session.datePayed ? new Date(session.datePayed) : undefined;
+      if(!session.datePayed) {
+        session.datePayedString = '--'
+      }
+      else {
+        session.datePayedString = dayjs(session.datePayed).format("MMMM D, YYYY");
+      }
       session.dateString = dayjs(session.date).format("MMMM D, YYYY H:mm");
       session.timeString = dayjs(session.date).format("H:mm");
 
@@ -107,6 +115,7 @@ export class SessionsService {
 
     if(session.paymentState == SessionPaymentState.payed) {
       session.paymentState = SessionPaymentState.owed;
+      session.datePayed = undefined;
     }
     else if(session.paymentState == SessionPaymentState.owed) {
       this.setSessionPayed(session)

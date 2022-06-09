@@ -26,6 +26,9 @@
             <div class="col col-title">
               State
             </div>
+            <div class="col col-title  col-wide">
+              Payment Date
+            </div>
             <div class="col col-title">
               Actions
             </div>
@@ -40,6 +43,9 @@
                                        'session-payed' : session.paymentState == SessionPaymentState.payed,
                                        'session-future' : session.isFuture}">
               {{session.isFuture ? 'Future' : (session.paymentState == SessionPaymentState.owed ? 'Debt' : 'Payed')}}
+            </div>
+            <div class="col col-wide">
+              {{session.datePayedString}}
             </div>
             <div class="col col-action-split">
               <div class="action" *ngIf="!session.isFuture" (click)="onToggleSessionState(session)">

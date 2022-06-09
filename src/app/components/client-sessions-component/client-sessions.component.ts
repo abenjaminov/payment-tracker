@@ -15,12 +15,14 @@ export class ClientSessionsComponent {
   @Input() clientAirTableId: string;
   @Input() title: string;
 
+  loadingSessionIds: {[key: string] : boolean} = {};
   isLoading: boolean;
   SessionPaymentState = SessionPaymentState;
   sessions: Array<Session>;
   sessionToAdd: Session;
 
-  editedSession: Session;
+  editedSessionId: string;
+
 
   constructor(public clientService: ClientService, private pagingService: PagingComponentService,
               public sessionsService: SessionsService, private messageService: MessagePopupComponentService) {
@@ -70,6 +72,10 @@ export class ClientSessionsComponent {
     session.date = new Date($event)
   }
 
+  onSessionToAddDatePayedChanged(session:Session, $event) {
+    session.datePayed = new Date($event)
+  }
+
   async onAddSessionClicked() {
     this.isLoading = true;
     await this.sessionsService.addSession(this.sessionToAdd)
@@ -79,16 +85,16 @@ export class ClientSessionsComponent {
   }
 
   async onDeleteSessionClicked(session: Session) {
-    this.isLoading = true;
+    this.loadingSessionIds[session.airTableId] = true
     await this.sessionsService.deleteSession(session);
 
     await this.init();
-    this.isLoading = false;
+    this.loadingSessionIds[session.airTableId] = false
   }
 
   onEditSessionClicked(session: Session) {
-    if(!this.editedSession) {
-      this.editedSession = session;
+    if(!this.editedSessionId) {
+      this.editedSessionId = session.airTableId;
     }
     else {
       this.messageService.showMessage({
@@ -99,16 +105,17 @@ export class ClientSessionsComponent {
           text: 'ביטול',
           isClose: true,
           action: () => {
-            this.editedSession = session;
+            this.editedSessionId = session.airTableId;
           }
         },{
           text: 'שמירה',
           isPrimary: true,
           action : async () => {
             this.messageService.closeMessage();
-            await this.onSaveSessionClicked(this.editedSession)
+            const editedSession = this.sessions.find((s) => s.airTableId == this.editedSessionId)
+            await this.onSaveSessionClicked(editedSession)
 
-            this.editedSession = session;
+            this.editedSessionId = session.airTableId;
           }
         }]
       })
@@ -116,11 +123,13 @@ export class ClientSessionsComponent {
   }
 
   async onSaveSessionClicked(session: Session) {
-    this.isLoading = true;
-    await this.sessionsService.saveSession(session);
-    this.editedSession = undefined;
+    this.editedSessionId = undefined;
+    this.loadingSessionIds[session.airTableId] = true;
+    setTimeout(async () => {
+      await this.sessionsService.saveSession(session);
 
-    await this.init();
-    this.isLoading = false;
+      //await this.init();
+      this.loadingSessionIds[session.airTableId] = false;
+    })
   }
 }

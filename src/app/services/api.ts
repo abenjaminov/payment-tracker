@@ -288,10 +288,6 @@ export class Api {
       }
     },{ url: 'sessions', type: 'post',
       action: async (apiService: ApiService, session: Session) => {
-        if(session.airTableId) {
-          await this.sessionsTable.destroy(session.airTableId);
-        }
-
         const sessionsAsAny = (session as any);
 
         let newSession: any = {
@@ -307,16 +303,22 @@ export class Api {
           }
         }
 
-        await this.sessionsTable.create([newSession])
+        if(session.airTableId) {
+          await this.sessionsTable.update([
+            {
+              id: session.airTableId,
+              fields : newSession.fields
+            }
+          ])
+        }
+        else {
+          await this.sessionsTable.create([newSession])
+        }
 
         apiService.cache.clearGroup(cacheGroups[CacheUrlGroupKey.sessionsSaved])
       }
     },{ url: 'clients', type: 'post',
       action: async (apiService: ApiService, client: Client) => {
-        if(client.airTableId) {
-          await this.clientsTable.destroy(client.airTableId);
-        }
-
         const clientAsAny = (client as any);
 
         let newClient: any = {
@@ -332,7 +334,17 @@ export class Api {
           }
         }
 
-        await this.clientsTable.create([newClient])
+        if(client.airTableId) {
+          await this.sessionsTable.update([
+            {
+              id: client.airTableId,
+              fields : newClient.fields
+            }
+          ])
+        }
+        else {
+          await this.clientsTable.create([newClient])
+        }
       }
     }, { url: 'sessions', type: 'delete',
       action: async (apiService: ApiService, id: string) => {
