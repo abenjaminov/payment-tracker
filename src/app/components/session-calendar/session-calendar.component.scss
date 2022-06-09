@@ -1,3 +1,9 @@
+.calendar-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .session-calendar-header {
   display: flex;
   height: 50px;
@@ -40,17 +46,21 @@
 .sessions-calendar {
   display: flex;
   flex-direction: column;
+  height: 100%;
 
   .row {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
 
     &:first-of-type {
       border-top: 1px solid black;
       font-weight: bold;
       font-size: 20px;
+    }
+
+    &:not(&.day-header) {
+      height: 20%;
     }
   }
 
@@ -66,7 +76,6 @@
     }
 
     &.day {
-      height: 118px;
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
@@ -136,9 +145,10 @@
           color:white;
           margin-top: 2px;
           font-size: 12px;
-          height: 20px;
+          height: calc(25% - 6px);
           width: calc(100% - 6px);
           font-weight: bold;
+          border: 1px solid transparent;
 
           .client-info {
             padding: 3px 8px;
@@ -147,8 +157,6 @@
           &:hover {
             border: 1px solid black;
             cursor:pointer;
-
-            height: 18px;
           }
 
           &.payed {

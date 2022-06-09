@@ -1,49 +1,49 @@
 <loader-content *ngIf="isLoading"></loader-content>
-<div class="session-calendar-header box">
-  <div class="month-change previous-month" (click)="onPreviousMonthClicked()">
-    <i class="fa fa-chevron-left"></i>
-  </div>
-  <div class="title">
-    {{currentMonth.monthName}}
-  </div>
-  <div class="month-change next-month" (click)="onNextMonthClicked()">
-    <i class="fa fa-chevron-right"></i>
-  </div>
-</div>
-<div class="sessions-calendar box">
-  <div class="day-header row">
-    <div *ngFor="let dayName of dayNames" class="col">
-      {{dayName}}
+<div class="calendar-container">
+  <div class="session-calendar-header box">
+    <div class="month-change previous-month" (click)="onPreviousMonthClicked()">
+      <i class="fa fa-chevron-left"></i>
+    </div>
+    <div class="title">
+      {{currentMonth.monthName}}
+    </div>
+    <div class="month-change next-month" (click)="onNextMonthClicked()">
+      <i class="fa fa-chevron-right"></i>
     </div>
   </div>
-  <div class="row" *ngFor="let dayRow of sessionDays">
-    <div *ngFor="let day of dayRow" class="col day" [ngClass]="{'not-current-month' : day.isNotDisplayedMonth, 'today' : day.isToday}">
-      <div class="day-title">
-        <div class="date">
-          {{day.date}}
-        </div>
-        <div class="action" (click)="onAddSessionClicked(day)">
-          <i class="fa fa-plus add-session"></i>
-        </div>
+  <div class="sessions-calendar box">
+    <div class="day-header row">
+      <div *ngFor="let dayName of dayNames" class="col">
+        {{dayName}}
       </div>
-      <div class="day-sessions">
-        <div class="day-session" *ngFor="let session of day.firstThreeSessions" (click)="onSessionClicked(day, session)"
-             [ngClass]="{'debt' : session.paymentState == SessionPaymentState.owed,
+    </div>
+    <div class="row" *ngFor="let dayRow of sessionDays">
+      <div *ngFor="let day of dayRow" class="col day" [ngClass]="{'not-current-month' : day.isNotDisplayedMonth, 'today' : day.isToday}">
+        <div class="day-title">
+          <div class="date">
+            {{day.date}}
+          </div>
+          <div class="action" (click)="onAddSessionClicked(day)">
+            <i class="fa fa-plus add-session"></i>
+          </div>
+        </div>
+        <div class="day-sessions">
+          <div class="day-session" *ngFor="let session of day.firstThreeSessions" (click)="onSessionClicked(day, session)"
+               [ngClass]="{'debt' : session.paymentState == SessionPaymentState.owed,
                          'payed' : session.paymentState == SessionPaymentState.payed,
                          'future' : session.isFuture}">
-          <div class="client-info">
-            {{session.timeString}}
+            <div class="client-info">
+              {{session.timeString}}
+            </div>
+            <div class="client-info">
+              {{session.clientName}}
+            </div>
           </div>
-          <div class="client-info">
-            {{session.clientName}}
+          <div class="day-session more" *ngIf="day.sessions && day.sessions.length > 3" (click)="onMoreClicked()">
+            More...
           </div>
-        </div>
-        <div class="day-session more" *ngIf="day.sessions && day.sessions.length > 3" (click)="onMoreClicked()">
-          More...
         </div>
       </div>
     </div>
   </div>
 </div>
-
-
