@@ -342,24 +342,19 @@ export class Api {
         const clientAsAny = (client as any);
 
         let newClient: any = {
+          id: client.airTableId ? client.airTableId : undefined,
           fields: {
-            id: client.id ? client.id : await this.getNextClientId(),
+            id: client.id !== undefined ? client.id : await this.getNextClientId(),
             name: client.name,
             phoneNumber: client.phoneNumber,
             basePayment: client.basePayment,
             isActive: true,
-            clientSessionIds : [],
             LinkToQueries: clientAsAny.LinkToQueries ? clientAsAny.LinkToQueries : [await this.getQueriesRecordId()]
           }
         }
 
         if(client.airTableId) {
-          await this.clientsTable.update([
-            {
-              id: client.airTableId,
-              fields : newClient.fields
-            }
-          ])
+          await this.clientsTable.update([newClient])
         }
         else {
           await this.clientsTable.create([newClient])

@@ -14,24 +14,31 @@
         <div class="col col-fill"><input type="text" [(ngModel)]="clientToAdd.phoneNumber"/></div>
         <div class="col col-fill"><input type="number" [(ngModel)]="clientToAdd.basePayment"/></div>
         <div class="col col-fill">--</div>
-        <div class="col col-action" (click)="onAddClientClicked($event)"><i class="fa-solid fa-plus"></i> Add</div>
+        <div class="col col-action" (click)="onAddClientClicked($event)">
+          <ng-container *ngIf="!loadingClientIds['undefined']">
+            <i class="fa-solid fa-plus"></i> Add
+          </ng-container>
+          <ng-container *ngIf="loadingClientIds['undefined']">
+            <i class="fa-solid fa-spinner spin"></i>
+          </ng-container>
+        </div>
       </div>
       <div class="row" *ngFor="let client of clientService.allClients" (click)="onClientClicked(client)">
-        <ng-container *ngIf="editedClient && client.airTableId == editedClient.airTableId">
+        <ng-container *ngIf="editedClientId && editedClientId == client.airTableId">
           <div class="col"><input type="text"  [(ngModel)]="client.name"/></div>
           <div class="col col-fill"><input type="text" [(ngModel)]="client.phoneNumber"/></div>
           <div class="col col-fill"><input type="number" [(ngModel)]="client.basePayment"/></div>
           <div class="col col-fill">--</div>
           <div class="col col-action" (click)="onSaveClientClicked($event, client)">
-            <div class="action" *ngIf="!isLoading">
+            <div class="action" *ngIf="!loadingClientIds[client.airTableId]">
               <i class="fa-solid fa-floppy-disk"></i>
             </div>
-            <div class="action" *ngIf="isLoading">
+            <div class="action" *ngIf="loadingClientIds[client.airTableId]">
               <i class="fa-solid fa-spinner spin"></i>
             </div>
           </div>
         </ng-container>
-        <ng-container *ngIf="!editedClient || client.airTableId != editedClient.airTableId">
+        <ng-container *ngIf="!editedClientId || editedClientId != client.airTableId">
           <div class="col">{{client.name}}</div>
           <div class="col col-fill">{{client.phoneNumber}}</div>
           <div class="col col-fill">{{client.basePayment}}₪</div>

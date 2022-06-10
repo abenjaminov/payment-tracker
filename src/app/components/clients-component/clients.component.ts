@@ -15,6 +15,9 @@ export class ClientsComponent {
   isLoading: boolean;
 
   editedClient: Client;
+  editedClientId: string;
+
+  loadingClientIds: {[key: string] : boolean} = {};
 
   constructor(public clientService: ClientService, private navigationService: NavigationService, private messageService: MessagePopupComponentService) {
   }
@@ -42,6 +45,8 @@ export class ClientsComponent {
   }
 
   onClientClicked(client : Client) {
+    if(this.editedClientId) return;
+
     this.navigationService.navigateToRoute(`clients/${client.airTableId}`);
   }
 
@@ -66,25 +71,33 @@ export class ClientsComponent {
     }
 
     await this.saveClient(this.clientToAdd)
+    await this.init(true);
   }
 
   async onSaveClientClicked($event: Event, clientToSave: Client) {
     $event.stopPropagation();
 
-    await this.saveClient(clientToSave)
+    await this.saveClient(clientToSave, true);
   }
 
-  async saveClient(clientToSave: Client) {
-    await this.clientService.saveClient(clientToSave);
+  async saveClient(clientToSave: Client, isEdit = false) {
+    this.loadingClientIds[clientToSave.airTableId] = true;
+    setTimeout(async () => {
+      await this.clientService.saveClient(clientToSave);
 
-    await this.init();
+      this.loadingClientIds[clientToSave.airTableId] = false;
+
+      if(isEdit) this.editedClientId = undefined;
+
+    })
+
   }
 
   async onEditClientClicked($event: Event, clientToEdit: Client) {
     $event.stopPropagation();
 
-    if(!this.editedClient) {
-      this.editedClient = clientToEdit;
+    if(!this.editedClientId) {
+      this.editedClientId = clientToEdit.airTableId;
     }
     else {
       this.messageService.showMessage({
@@ -95,16 +108,16 @@ export class ClientsComponent {
           text: 'ביטול',
           isClose: true,
           action: () => {
-            this.editedClient = clientToEdit;
+            this.editedClientId = clientToEdit.airTableId;
           }
         },{
           text: 'שמירה',
           isPrimary: true,
           action : async () => {
             this.messageService.closeMessage();
-            await this.saveClient(this.editedClient)
+            await this.saveClient(clientToEdit)
 
-            this.editedClient = clientToEdit;
+            this.editedClientId = clientToEdit.airTableId;
           }
         }]
       })
