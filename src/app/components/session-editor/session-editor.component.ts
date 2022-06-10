@@ -136,7 +136,7 @@ export class SessionEditorComponent {
       this.editedSession.clientIdRef = [this.selectedClientAirTableId];
 
     this.isLoading = true;
-    await this.sessionService.saveSession(this.editedSession)
+    await this.sessionService.saveSession([this.editedSession]);
     this.isLoading = false;
 
     this.sessionEditorComponentService.closeEditor();

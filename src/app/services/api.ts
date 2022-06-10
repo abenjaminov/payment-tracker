@@ -16,7 +16,7 @@ enum CacheUrlGroupKey {
 let cacheGroups: { [ key: number] : CacheUrlGroup;} = {
   0 : {
     key: CacheUrlGroupKey.sessionsSaved,
-    cacheKeys : ['monthly-revenue', 'this-month-revenue']
+    cacheKeys : ['monthly-revenue', 'this-month-revenue', 'future-revenue','total-debt']
   }
 }
 
@@ -126,8 +126,6 @@ export class Api {
     this.endpoints = [];
     this.endpoints.push({url: 'clients',type: 'get',
       action: async (apiService: ApiService, filter: GetClientsArgs) => {
-        //this.fixClients()
-
         let pageSize = filter && filter.pageSize ? filter.pageSize : 100;
 
         let filterFormula = '';
@@ -179,11 +177,11 @@ export class Api {
             conditions.push(`{paymentYear} = ${filter.filterPaymentYear}`);
           }
 
-          if(filter.filterClientId) {
+          if(filter.filterClientId !== undefined) {
             conditions.push(`{clientIdRef}&'' = '${filter.filterClientId}'`);
           }
 
-          if(filter.filterPaymentState) {
+          if(filter.filterPaymentState !== undefined) {
             conditions.push(`{paymentState} = '${SessionPaymentState[filter.filterPaymentState]}'`)
           }
 
@@ -258,7 +256,12 @@ export class Api {
       },
       {url: 'debt', type: 'get',
       action: async (apiService: ApiService) => {
-        // Update sessions
+
+        const cacheKey = `total-debt;`;
+        let debt = apiService.cache.getData(cacheKey);
+
+        if(debt !== undefined) return debt;
+
         let filterFormula = '';
 
         const selectResult = await this.queriesTable.select({
@@ -268,14 +271,19 @@ export class Api {
         }).firstPage();
 
         let result = this.getViewObject(selectResult);
+        debt = result[0]['debt'];
+        apiService.cache.cacheData(cacheKey, debt);
 
-        return result[0]['debt'];
+        return debt;
       }
     },{
       url: 'future-revenue',
       type: 'get',
       action: async (apiService: ApiService) => {
-        // Update sessions
+        const cacheKey = `future-revenue;`;
+        let futureRevenue = apiService.cache.getData(cacheKey);
+
+        if(futureRevenue !== undefined) return futureRevenue;
 
         const selectResult = await this.queriesTable.select({
           view: 'Grid view',
@@ -284,13 +292,22 @@ export class Api {
 
         let result = this.getViewObject(selectResult);
 
-        return result[0]['futureRevenue'];
+        futureRevenue = result[0]['futureRevenue'];
+        apiService.cache.cacheData(cacheKey, futureRevenue);
+
+        return futureRevenue;
       }
     },{ url: 'sessions', type: 'post',
-      action: async (apiService: ApiService, session: Session) => {
-        const sessionsAsAny = (session as any);
+      action: async (apiService: ApiService, sessions: Array<Session>) => {
+
+      const newSessions = [];
+      const sessionsToUpdate = [];
+
+      for(let session of sessions) {
+        const sessionAsAny = (session as any);
 
         let newSession: any = {
+          id: session.airTableId ? session.airTableId : undefined,
           fields: {
             id: session.id ? session.id : await this.getNextSessionId(),
             clientIdRef: session.clientIdRef,
@@ -299,21 +316,24 @@ export class Api {
             paymentState: SessionPaymentState[session.paymentState],
             datePayed: session.datePayed,
             notes: session.notes,
-            LinkToQueries: sessionsAsAny.LinkToQueries ? sessionsAsAny.LinkToQueries : [await this.getQueriesRecordId()]
+            LinkToQueries: sessionAsAny.LinkToQueries ? sessionAsAny.LinkToQueries : [await this.getQueriesRecordId()]
           }
         }
 
-        if(session.airTableId) {
-          await this.sessionsTable.update([
-            {
-              id: session.airTableId,
-              fields : newSession.fields
-            }
-          ])
+        if(newSession.id) {
+          sessionsToUpdate.push(newSession);
         }
         else {
-          await this.sessionsTable.create([newSession])
+          newSessions.push(newSession);
         }
+      }
+
+
+      if(sessionsToUpdate.length > 0)
+          await this.sessionsTable.update(sessionsToUpdate)
+
+        if(newSessions.length > 0)
+          await this.sessionsTable.create(newSessions)
 
         apiService.cache.clearGroup(cacheGroups[CacheUrlGroupKey.sessionsSaved])
       }
@@ -328,14 +348,13 @@ export class Api {
             phoneNumber: client.phoneNumber,
             basePayment: client.basePayment,
             isActive: true,
-            sessions: '',
             clientSessionIds : [],
             LinkToQueries: clientAsAny.LinkToQueries ? clientAsAny.LinkToQueries : [await this.getQueriesRecordId()]
           }
         }
 
         if(client.airTableId) {
-          await this.sessionsTable.update([
+          await this.clientsTable.update([
             {
               id: client.airTableId,
               fields : newClient.fields

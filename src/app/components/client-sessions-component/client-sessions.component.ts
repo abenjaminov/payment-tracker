@@ -16,12 +16,19 @@ export class ClientSessionsComponent {
   @Input() title: string;
 
   loadingSessionIds: {[key: string] : boolean} = {};
+
+  isSessionSelected: {[key: string] : boolean} = {};
+
+  sessionsMap: {[airTableId: string] : Session};
+
   isLoading: boolean;
+  isAddingSession: boolean;
   SessionPaymentState = SessionPaymentState;
   sessions: Array<Session>;
   sessionToAdd: Session;
 
   editedSessionId: string;
+  selectedCount: number = 0;
 
 
   constructor(public clientService: ClientService, private pagingService: PagingComponentService,
@@ -35,7 +42,9 @@ export class ClientSessionsComponent {
   }
 
   async ngOnInit() {
+    this.isLoading = true;
     await this.init();
+    this.isLoading = false;
   }
 
   async init() {
@@ -46,6 +55,16 @@ export class ClientSessionsComponent {
     await this.pagingService.load(PagedEntityNames.clients, 15);
 
     this.sessions = await this.sessionsService.getSessions({filterClientId: this.clientService.selectedClient.id});
+
+    this.sessionsMap = {};
+
+    this.sessions.forEach((session) => {
+      this.sessionsMap[session.airTableId] = session;
+    });
+
+    this.selectedCount = 0;
+    this.isSessionSelected = {};
+    this.loadingSessionIds = {};
   }
 
   initSessionToAdd() {
@@ -60,12 +79,53 @@ export class ClientSessionsComponent {
   }
 
   async onToggleSessionState(session: Session) {
-    this.isLoading = true;
-    this.sessionsService.toggleSessionPaymentState(session);
-    await this.sessionsService.saveSession(session)
+    if(this.selectedCount > 0) {
+      let keys = Object.keys(this.isSessionSelected).filter(x => this.isSessionSelected[x]);
+      let isAllSameState = true;
+      let firstState = this.sessionsMap[keys[0]].paymentState;
 
-    await this.init();
-    this.isLoading = false;
+      for (let i = 1; i < keys.length && isAllSameState; i++) {
+        isAllSameState = this.sessionsMap[keys[i]].paymentState === firstState;
+      }
+
+      if(!isAllSameState) {
+        this.messageService.showMessage({
+          title: 'שגיאה',
+          message: 'יש לבחור רק אימונים אשר נמצאים באותו מצב תשלום לפני ביצוע פעולה זו.',
+          type: MessagePopupType.error,
+          actions: [{
+            text: 'סגור',
+            isClose: true,
+            isPrimary: true
+          }]
+        })
+      }
+      else {
+        const sessionsToEdit = keys.map(key => this.sessionsMap[key]);
+
+        for (const sessionToEdit of sessionsToEdit) {
+          this.loadingSessionIds[sessionToEdit.airTableId] = true;
+          this.sessionsService.toggleSessionPaymentState(sessionToEdit);
+        }
+
+        setTimeout(async () => {
+          await this.sessionsService.saveSession(sessionsToEdit)
+
+          for (const sessionToEdit of sessionsToEdit) {
+            this.loadingSessionIds[sessionToEdit.airTableId] = false;
+          }
+        })
+      }
+    }
+    else {
+      this.loadingSessionIds[session.airTableId] = true;
+      this.sessionsService.toggleSessionPaymentState(session);
+      setTimeout(async () => {
+        await this.sessionsService.saveSession([session])
+
+        this.loadingSessionIds[session.airTableId] = false;
+      })
+    }
   }
 
   onSessionToAddDateChanged(session:Session, $event) {
@@ -78,21 +138,49 @@ export class ClientSessionsComponent {
 
   async onAddSessionClicked() {
     this.isLoading = true;
+    this.isAddingSession = true;
     await this.sessionsService.addSession(this.sessionToAdd)
 
     await this.init();
     this.isLoading = false;
+    this.isAddingSession = false;
   }
 
   async onDeleteSessionClicked(session: Session) {
-    this.loadingSessionIds[session.airTableId] = true
-    await this.sessionsService.deleteSession(session);
+    if(this.isLoading || this.loadingSessionIds[session.airTableId]) return;
 
-    await this.init();
-    this.loadingSessionIds[session.airTableId] = false
+    let sessionsToDelete = [session];
+    if(this.selectedCount > 0) {
+      let keys = Object.keys(this.isSessionSelected).filter(x => this.isSessionSelected[x]);
+      sessionsToDelete = keys.map(x => this.sessionsMap[x]);
+    }
+
+    this.messageService.showMessage({
+      title: systemMessages.deleteMultipleClientSessionsTitle,
+      message: systemMessages.deleteMultipleClientSessionsMessage,
+      type: MessagePopupType.info,
+      actions: [{
+        text: "ביטול",
+        isPrimary: true,
+        isClose: true,
+      },{
+        text: "מחיקה",
+        isClose: true,
+        action : async () => {
+          this.isLoading = true;
+          let deletePromises = sessionsToDelete.map((x) => this.sessionsService.deleteMessageNoMessage(x));
+          await Promise.all(deletePromises);
+
+          await this.init();
+          this.isLoading = false;
+        }
+      }]
+    })
   }
 
   onEditSessionClicked(session: Session) {
+    if(this.loadingSessionIds[session.airTableId] || this.selectedCount > 0) return;
+
     if(!this.editedSessionId) {
       this.editedSessionId = session.airTableId;
     }
@@ -126,10 +214,20 @@ export class ClientSessionsComponent {
     this.editedSessionId = undefined;
     this.loadingSessionIds[session.airTableId] = true;
     setTimeout(async () => {
-      await this.sessionsService.saveSession(session);
+      await this.sessionsService.saveSession([session]);
 
-      //await this.init();
       this.loadingSessionIds[session.airTableId] = false;
     })
+  }
+
+  onSessionToggleSelected(session: Session) {
+    this.isSessionSelected[session.airTableId] = !this.isSessionSelected[session.airTableId];
+
+    if(this.isSessionSelected[session.airTableId]) {
+      this.selectedCount++;
+    }
+    else{
+      this.selectedCount--;
+    }
   }
 }

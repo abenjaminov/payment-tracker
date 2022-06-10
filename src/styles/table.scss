@@ -25,6 +25,10 @@
     flex-direction: row;
     justify-content: flex-start;
 
+    &.selected {
+      background-color: #f3f3f3;
+    }
+
     &-title {
       border-bottom: 1px solid black;
       font-size: 18px;
@@ -45,10 +49,20 @@
       input {
         width: 100%;
         text-align: center;
+
+        &[type="checkbox"] {
+          height: 21px;
+          margin: 0px;
+          padding: 0px;
+        }
       }
 
       &-short {
         flex-basis: 70px;
+
+        &-2 {
+          flex-basis: 35px;
+        }
       }
 
       &-wide {
@@ -76,11 +90,12 @@
           flex-basis: 135px;
           justify-content: flex-start;
 
+
           .action {
             flex: 1;
             display: flex;
             flex-direction: row;
-            justify-content: center;
+            justify-content: space-around;
             align-items: center;
             height: 100%;
 

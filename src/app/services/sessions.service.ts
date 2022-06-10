@@ -50,8 +50,12 @@ export class SessionsService {
   constructor(private apiService: ApiService, private messageService: MessagePopupComponentService) {
   }
 
-  async saveSession(sessionToEdit: Session) {
-    await this.apiService.post('sessions', sessionToEdit);
+  async saveSession(sessionsToEdit: Array<Session>) {
+    await this.apiService.post('sessions', sessionsToEdit);
+  }
+
+  async deleteMessageNoMessage(sessionToDelete: Session) {
+    await this.apiService.delete('sessions', sessionToDelete.airTableId);
   }
 
   deleteSession(sessionToDelete: Session) {
@@ -81,7 +85,7 @@ export class SessionsService {
   }
 
   async addSession(sessionToAdd: Session) {
-    await this.apiService.post('sessions', sessionToAdd);
+    await this.apiService.post('sessions', [sessionToAdd]);
   }
 
   async getSessions(filter?: GetSessionArgs) {
@@ -110,15 +114,24 @@ export class SessionsService {
     }
   }
 
+  setPaymentState(session: Session, paymentState: SessionPaymentState) {
+    if(paymentState == SessionPaymentState.owed) {
+      session.paymentState = SessionPaymentState.owed;
+      session.datePayed = undefined;
+    }
+    else if(paymentState == SessionPaymentState.payed) {
+      this.setSessionPayed(session)
+    }
+  }
+
   toggleSessionPaymentState(session: Session) {
     if(session.isFuture) return;
 
     if(session.paymentState == SessionPaymentState.payed) {
-      session.paymentState = SessionPaymentState.owed;
-      session.datePayed = undefined;
+      this.setPaymentState(session, SessionPaymentState.owed);
     }
     else if(session.paymentState == SessionPaymentState.owed) {
-      this.setSessionPayed(session)
+      this.setPaymentState(session, SessionPaymentState.payed);
     }
   }
 

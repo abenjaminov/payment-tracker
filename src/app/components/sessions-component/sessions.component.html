@@ -8,6 +8,9 @@
       <div class="box" *ngIf="!isLoading">
         <div class="table table-clickable">
           <div class="row row-title">
+            <div class="col col-title col-short-2">
+              &nbsp;
+            </div>
             <div class="col col-title col-short">
               Id
             </div>
@@ -33,7 +36,10 @@
               Actions
             </div>
           </div>
-          <div class="row" *ngFor="let session of sessions">
+          <div class="row" *ngFor="let session of sessions" [ngClass]="{'selected' : isSessionSelected[session.airTableId]}">
+            <div class="col col-title col-short-2">
+              <input type="checkbox" (ngModelChange)="onSessionToggleSelected(session)" [ngModel]="isSessionSelected[session.airTableId]"/>
+            </div>
             <div class="col col-short">{{session.id}}</div>
             <div class="col" (click)="goToClient(session.clientIdRef[0])">{{session.clientName}}</div>
             <div class="col col-wide">{{session.dateString}}</div>
@@ -48,14 +54,18 @@
               {{session.datePayedString}}
             </div>
             <div class="col col-action-split">
-              <div class="action" *ngIf="!session.isFuture" (click)="onToggleSessionState(session)">
-                <i *ngIf="session.paymentState == SessionPaymentState.owed" class="fa-solid fa-coins"></i>
-                <i *ngIf="session.paymentState == SessionPaymentState.payed" class="fa-solid fa-rotate-left"></i>
-              </div>
+              &nbsp;
+              <ng-container *ngIf="selectedCount == 0 || isSessionSelected[session.airTableId]">
+                <div class="action" *ngIf="!session.isFuture" (click)="onToggleSessionState(session)">
+                  <i *ngIf="!loadingSessionIds[session.airTableId] && session.paymentState == SessionPaymentState.owed" class="fa-solid fa-coins"></i>
+                  <i *ngIf="!loadingSessionIds[session.airTableId] && session.paymentState == SessionPaymentState.payed" class="fa-solid fa-rotate-left"></i>
+                  <i *ngIf="loadingSessionIds[session.airTableId]" class="fa-solid fa-spinner spin"></i>
+                </div>
+              </ng-container>
               <div class="action action-empty" *ngIf="session.isFuture">
                 &nbsp;
               </div>
-              <div class="action" (click)="onDeleteSessionClicked(session)">
+              <div class="action" (click)="onDeleteSessionClicked(session)" *ngIf="selectedCount == 0 || isSessionSelected[session.airTableId]">
                 <i class="fa-solid fa-minus"></i>
               </div>
             </div>

@@ -4,5 +4,7 @@ export const systemMessages = {
   cantAddClientTitle: 'אי אפשר להוסיף עדיין',
   cantAddClientMessage: 'יפה שלי, צריך למלא את כל השדות לפני שמוסיפים לקוח',
   deleteSessionTitle: 'מחיקת אימון',
-  deleteSessionMessage: 'את בטוחה שאתה רוצה למחוק את האימון הזה עם {clientName} ב- {sessionDate}'
+  deleteSessionMessage: 'את בטוחה שאתה רוצה למחוק את האימון הזה עם {clientName} ב- {sessionDate}',
+  deleteMultipleClientSessionsTitle: 'מחיקת אימונים',
+  deleteMultipleClientSessionsMessage: 'למחוק בוודאות את האימונים המסומנים?'
 }

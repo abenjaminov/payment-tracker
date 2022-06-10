@@ -1,3 +1,4 @@
+<loader-content *ngIf="isLoading"></loader-content>
 <div class="client-sessions">
   <div class="sessions-list-container box">
     <div class="title" *ngIf="title">
@@ -6,6 +7,9 @@
     <div class="sessions-list">
       <div class="table table-bordered table-clickable">
         <div class="row row-title">
+          <div class="col col-title col-short-2">
+            &nbsp;
+          </div>
           <div class="col col-title col-wide">Date</div>
           <div class="col col-title">Payment</div>
           <div class="col col-fill col-title">Notes</div>
@@ -14,22 +18,28 @@
           <div class="col col-title fill">Actions</div>
         </div>
         <div class="row" *ngIf="sessionToAdd">
+          <div class="col col-title col-short-2">
+            &nbsp;
+          </div>
           <div class="col col-wide"><input type="datetime-local" #datePicker required [ngModel]="sessionToAdd.date | date:'yyyy-MM-ddTHH:mm'" (ngModelChange)="onSessionToAddDateChanged(sessionToAdd, $event)"/></div>
           <div class="col"><input type="number" pattern="\d*" required [(ngModel)]="sessionToAdd.payment"/></div>
           <div class="col col-fill"><input type="text" [(ngModel)]="sessionToAdd.notes"/></div>
           <div class="col">--</div>
           <div class="col col-wide">--</div>
           <div class="col col-action" (click)="onAddSessionClicked()">
-            <div class="action" *ngIf="!loadingSessionIds['000']">
+            <div class="action" *ngIf="!isAddingSession">
               <i class="fa-solid fa-plus"></i> Add
             </div>
-            <div class="action" *ngIf="loadingSessionIds['000']">
+            <div class="action" *ngIf="isAddingSession">
               <i class="fa-solid fa-spinner spin"></i>
             </div>
           </div>
         </div>
         <div *ngFor="let session of sessions">
           <div class="row" *ngIf="editedSessionId && editedSessionId === session.airTableId">
+            <div class="col col-title col-short-2">
+              &nbsp;
+            </div>
             <div class="col col-wide"><input type="datetime-local" required [ngModel]="session.date | date:'yyyy-MM-ddTHH:mm'" (ngModelChange)="onSessionToAddDateChanged(session, $event)"/></div>
             <div class="col"><input type="number" pattern="\d*" required [(ngModel)]="session.payment"/></div>
             <div class="col col-fill"><input type="text" [(ngModel)]="session.notes"/></div>
@@ -44,7 +54,10 @@
               </div>
             </div>
           </div>
-          <div class="row" *ngIf="!editedSessionId || editedSessionId != session.airTableId">
+          <div class="row" *ngIf="!editedSessionId || editedSessionId != session.airTableId" [ngClass]="{'selected' : isSessionSelected[session.airTableId]}">
+            <div class="col col-title col-short-2">
+              <input type="checkbox" (ngModelChange)="onSessionToggleSelected(session)" [ngModel]="isSessionSelected[session.airTableId]"/>
+            </div>
             <div class="col col-wide">{{session.dateString}}</div>
             <div class="col">{{session.payment}}₪</div>
             <div class="col col-fill">{{session.notes}}</div>
@@ -55,21 +68,23 @@
             </div>
             <div class="col col-wide">{{session.datePayedString}}</div>
             <div class="col col-action-split">
-              <div class="action" *ngIf="!session.isFuture && !loadingSessionIds[session.airTableId]" (click)="onToggleSessionState(session)">
+              <div class="action" *ngIf="!isLoading && !session.isFuture && !loadingSessionIds[session.airTableId]" (click)="onToggleSessionState(session)">
                 <i *ngIf="session.paymentState == SessionPaymentState.owed" class="fa-solid fa-coins"></i>
                 <i *ngIf="session.paymentState == SessionPaymentState.payed" class="fa-solid fa-rotate-left"></i>
               </div>
-              <div class="action action-empty" *ngIf="!loadingSessionIds[session.airTableId] && session.isFuture">
+              <div class="action action-empty" *ngIf="!isLoading && !loadingSessionIds[session.airTableId] && session.isFuture">
                 &nbsp;
               </div>
               <div class="action" *ngIf="loadingSessionIds[session.airTableId]">
                 <i class="fa-solid fa-spinner spin"></i>
               </div>
-              <div class="action" (click)="onEditSessionClicked(session)" *ngIf="!loadingSessionIds[session.airTableId]">
-                <i class="fa-solid fa-pen"></i>
+              <div class="action" (click)="onEditSessionClicked(session)">
+                <i class="fa-solid fa-pen" *ngIf="!isLoading && !loadingSessionIds[session.airTableId] && selectedCount == 0"></i>
+                <ng-container *ngIf="isLoading || loadingSessionIds[session.airTableId] || selectedCount > 0">&nbsp;</ng-container>
               </div>
-              <div class="action" (click)="onDeleteSessionClicked(session)" *ngIf="!loadingSessionIds[session.airTableId]">
-                <i class="fa-solid fa-minus"></i>
+              <div class="action" (click)="onDeleteSessionClicked(session)" *ngIf="!isLoading">
+                <i class="fa-solid fa-minus" *ngIf="!isLoading && !loadingSessionIds[session.airTableId]"></i>
+                <ng-container *ngIf="isLoading || loadingSessionIds[session.airTableId]">&nbsp;</ng-container>
               </div>
             </div>
           </div>
@@ -80,7 +95,6 @@
   <div class="paging">
     <paging></paging>
   </div>
-
 </div>
 
 

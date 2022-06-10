@@ -24,10 +24,6 @@ export class SidebarComponent {
     href: '/clients',
     isSelected: false
   },{
-    text: 'Sessions',
-    href: '/sessions',
-    isSelected: false
-  },{
     text: 'Calendar',
     href: '/calendar',
     isSelected: false
