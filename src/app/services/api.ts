@@ -9,7 +9,7 @@ import {AirTableEntity, GetMonthlyRevenueArgs} from "../models";
 import {ApiService} from "./api.service";
 import {CacheUrlGroup} from "./cache";
 
-export const apiVersion: string = '1.0.3';
+export const apiVersion: string = '1.0.4';
 
 enum CacheUrlGroupKey {
   sessionsSaved
