@@ -39,7 +39,7 @@ export class RevenueService {
   }
 
   async calculateRevenueGraphOptions() : Promise<any> {
-    let options = Object.assign({}, this.revenueGraphOptionsTemplate);
+    let options = JSON.parse(JSON.stringify( this.revenueGraphOptionsTemplate));
 
     let currentMonth = new Date().getMonth();
     let currentYear = new Date().getFullYear();

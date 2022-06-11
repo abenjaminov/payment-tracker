@@ -9,12 +9,17 @@ import {RevenueService} from "./revenue.service";
   styleUrls: ['revenue-graph.component.scss']
 })
 export class RevenueGraphComponent {
-  options: any = {};
+  options: any;
+  isLoading: boolean;
 
   constructor(private revenueService: RevenueService) {
   }
 
   async ngOnInit() {
+    if(this.options) return;
+
+    this.isLoading = true;
     this.options = await this.revenueService.calculateRevenueGraphOptions();
+    this.isLoading = false;
   }
 }

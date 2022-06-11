@@ -1,3 +1,4 @@
-<div class="revenue-graph box">
-  <div echarts [options]="options" style="height: 500px;width: 950px;"></div>
+<div class="revenue-graph box" style="height: 500px;width: 950px;">
+  <loader *ngIf="isLoading"></loader>
+  <div echarts [initOpts]="options" [options]="options" [merge]="options" *ngIf="!isLoading" style="height: 500px;width: 950px;"></div>
 </div>
