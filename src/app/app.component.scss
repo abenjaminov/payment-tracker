@@ -8,6 +8,13 @@
   display: flex;
   flex-direction: row;
 
+  .version {
+    position: absolute;
+    right: 10px;
+    font-weight: bold;
+    font-style: italic;
+  }
+
   .sidebar-container {
     flex-basis: 10%;
     height: 100%;
