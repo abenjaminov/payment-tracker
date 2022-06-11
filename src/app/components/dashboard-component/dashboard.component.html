@@ -1,6 +1,11 @@
 <div class="dashboard">
-  <box-number-display [service]="boxNumberThisMonthRevenueAverageService"></box-number-display>
-  <box-number-display [service]="boxNumberThisMonthRevenueService"></box-number-display>
-  <box-number-display [service]="boxNumberDisplayTotalDebtService"></box-number-display>
-  <box-number-display [service]="boxNumberDisplayFutureRevenueService"></box-number-display>
+  <div class="group">
+    <box-number-display [service]="boxNumberThisMonthRevenueAverageService"></box-number-display>
+    <box-number-display [service]="boxNumberThisMonthRevenueService"></box-number-display>
+    <box-number-display [service]="boxNumberDisplayTotalDebtService"></box-number-display>
+    <box-number-display [service]="boxNumberDisplayFutureRevenueService"></box-number-display>
+  </div>
+  <div class="group">
+    <revenue-graph></revenue-graph>
+  </div>
 </div>

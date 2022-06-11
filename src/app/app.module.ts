@@ -11,7 +11,6 @@ import {ClientSessionsComponent} from "./components/client-sessions-component/cl
 import {HeaderComponent} from "./components/header-component/header.component";
 import {FormsModule} from "@angular/forms";
 import {DatePipe} from "@angular/common";
-import {SessionsComponent} from "./components/sessions-component/sessions.component";
 import {FilterComponent} from "./components/filter-component/filter.component";
 import {LoaderComponent} from "./components/loader-component/loader.component";
 import {BoxNumberDisplayComponent} from "./components/box-number-display/box-number-display.component";
@@ -20,6 +19,8 @@ import {MessagePopupComponent} from "./components/message-popup/message-popup.co
 import {SessionCalendarComponent} from "./components/session-calendar/session-calendar.component";
 import {SessionEditorComponent} from "./components/session-editor/session-editor.component";
 import {PagingComponent} from "./components/paging/paging.component";
+import {NgxEchartsModule} from "ngx-echarts";
+import {RevenueGraphComponent} from "./components/revenue-graph/revenue-graph.component";
 
 @NgModule({
   declarations: [
@@ -30,7 +31,6 @@ import {PagingComponent} from "./components/paging/paging.component";
     ClientsComponent,
     ClientSessionsComponent,
     HeaderComponent,
-    SessionsComponent,
     FilterComponent,
     LoaderComponent,
     BoxNumberDisplayComponent,
@@ -38,12 +38,16 @@ import {PagingComponent} from "./components/paging/paging.component";
     MessagePopupComponent,
     SessionCalendarComponent,
     SessionEditorComponent,
-    PagingComponent
+    PagingComponent,
+    RevenueGraphComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+    NgxEchartsModule.forRoot({
+      echarts: () => import('echarts')
+    })
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent]
