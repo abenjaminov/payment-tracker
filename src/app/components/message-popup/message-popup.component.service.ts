@@ -27,6 +27,7 @@ export class MessagePopupOptions {
 export class MessagePopupComponentService {
   onShowPopup: ReplaySubject<MessagePopupOptions> = new ReplaySubject<MessagePopupOptions>(1);
   onClosePopup: ReplaySubject<void> = new ReplaySubject<void>(1);
+  onMessageClosing: ReplaySubject<void> = new ReplaySubject<void>(1);
 
   showMessage(options: MessagePopupOptions) {
     this.onShowPopup.next(options);
@@ -34,5 +35,9 @@ export class MessagePopupComponentService {
 
   closeMessage() {
     this.onClosePopup.next();
+  }
+
+  messageClosing() {
+    this.onMessageClosing.next();
   }
 }

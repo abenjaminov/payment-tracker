@@ -25,6 +25,10 @@ export class CacheService {
     this.keys = this.keys.filter(x => x !== key);
   }
 
+  clear() {
+    localStorage.clear();
+  }
+
   getData(key: string): any {
     let result = localStorage.getItem(key);
 

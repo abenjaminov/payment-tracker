@@ -9,6 +9,8 @@ import {AirTableEntity, GetMonthlyRevenueArgs} from "../models";
 import {ApiService} from "./api.service";
 import {CacheUrlGroup} from "./cache";
 
+export const apiVersion: string = '1.0.3';
+
 enum CacheUrlGroupKey {
   sessionsSaved
 }
@@ -297,7 +299,22 @@ export class Api {
 
         return futureRevenue;
       }
-    },{ url: 'sessions', type: 'post',
+    },{
+        url: 'version',
+        type: 'get',
+        action: async (apiService: ApiService) => {
+          const selectResult = await this.identifiersTable.select({
+            view: 'Grid view',
+            fields: ['version']
+          }).firstPage();
+
+          let result = this.getViewObject(selectResult);
+
+          const version = result[0]['version'];
+
+          return version;
+        }
+      },{ url: 'sessions', type: 'post',
       action: async (apiService: ApiService, sessions: Array<Session>) => {
 
       const newSessions = [];
@@ -327,7 +344,6 @@ export class Api {
           newSessions.push(newSession);
         }
       }
-
 
       if(sessionsToUpdate.length > 0)
           await this.sessionsTable.update(sessionsToUpdate)

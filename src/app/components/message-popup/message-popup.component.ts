@@ -47,6 +47,7 @@ export class MessagePopupComponent {
 
   closePopup() {
     this.isOpen = false;
+    this.messagePopupComponentService.messageClosing();
   }
 
   onActionClicked(action: MessagePopupAction) {

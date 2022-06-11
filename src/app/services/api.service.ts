@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {Api} from "./api";
+import {Api, apiVersion} from "./api";
 import {CacheService} from "./cache";
 
 @Injectable({
@@ -33,5 +33,13 @@ export class ApiService {
       const result = await endpoint.action(this, id);
       return result;
     }
+  }
+
+  async isVersionMatching() {
+    const versionEndpoint = this.api.endpoints.find(x => x.url === 'version');
+    const updatedVersion = await versionEndpoint.action();
+
+    let result = apiVersion !== updatedVersion;
+    return result;
   }
 }
