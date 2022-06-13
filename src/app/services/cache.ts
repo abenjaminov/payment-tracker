@@ -15,22 +15,22 @@ export class CacheService {
   }
 
   cacheData(key: string, data) {
-    localStorage.setItem(key, JSON.stringify(data));
+    sessionStorage.setItem(key, JSON.stringify(data));
     this.keys.push(key);
   }
 
   clearData(key: string) {
     if(this.getData(key) == undefined) return;
-    localStorage.removeItem(key);
+    sessionStorage.removeItem(key);
     this.keys = this.keys.filter(x => x !== key);
   }
 
   clear() {
-    localStorage.clear();
+    sessionStorage.clear();
   }
 
   getData(key: string): any {
-    let result = localStorage.getItem(key);
+    let result = sessionStorage.getItem(key);
 
     if(result == null) return undefined;
 
