@@ -32,6 +32,13 @@
           <i *ngIf="editedSession.paymentState == SessionPaymentState.owed" class="fa-solid fa-coins toggle-payment-state" (click)="togglePaymentState()"></i>
           <i *ngIf="editedSession.paymentState == SessionPaymentState.payed" class="fa-solid fa-rotate-left toggle-payment-state" (click)="togglePaymentState()"></i>
         </div>
+        <div class="receipt-state" *ngIf="editedSession.paymentState == SessionPaymentState.payed">
+          <div class="receipt-state-text  ">Receipt?</div>
+          <div class="toggle-receipt-state">
+            <input type="checkbox" [(ngModel)]="editedSession.receipt">
+          </div>
+
+        </div>
       </div>
     </div>
     <div class="footer">

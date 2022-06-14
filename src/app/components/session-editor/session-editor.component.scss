@@ -54,6 +54,29 @@
         width: 48%;
         padding: 0 2% 0 0;
 
+        .receipt-state {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+
+          .receipt-state-text {
+            width: 100px;
+          }
+
+          .toggle-receipt-state {
+            margin-left: 5px;
+            display: flex;
+            align-items: center;
+            width: 20px;
+            justify-content: center;
+
+            input[type=checkbox] {
+              margin: 0px;
+              padding: 0px;
+            }
+          }
+        }
+
         .payment-state {
           display: flex;
           flex-direction: row;
@@ -64,6 +87,10 @@
 
           .toggle-payment-state {
             margin-left: 5px;
+            display: flex;
+            align-items: center;
+            width: 20px;
+            justify-content: center;
 
             &:hover {
               color: #474B60;
