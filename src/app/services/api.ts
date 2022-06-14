@@ -333,6 +333,7 @@ export class Api {
             paymentState: SessionPaymentState[session.paymentState],
             datePayed: session.datePayed ? session.datePayed : null,
             notes: session.notes,
+            receipt: session.receipt,
             LinkToQueries: sessionAsAny.LinkToQueries ? sessionAsAny.LinkToQueries : [await this.getQueriesRecordId()]
           }
         }
@@ -345,11 +346,11 @@ export class Api {
         }
       }
 
-      if(sessionsToUpdate.length > 0)
-          await this.sessionsTable.update(sessionsToUpdate)
+        if(sessionsToUpdate.length > 0)
+            await this.sessionsTable.update(sessionsToUpdate)
 
         if(newSessions.length > 0)
-          await this.sessionsTable.create(newSessions)
+            await this.sessionsTable.create(newSessions)
 
         apiService.cache.clearGroup(cacheGroups[CacheUrlGroupKey.sessionsSaved])
       }

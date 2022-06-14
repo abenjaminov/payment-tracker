@@ -42,6 +42,7 @@ export class Session implements AirTableEntity {
   datePayedString?: string;
   isFuture?: boolean;
   clientName?: string;
+  receipt: boolean;
 }
 
 @Injectable({providedIn: 'root'})

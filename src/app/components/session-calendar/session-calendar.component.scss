@@ -151,7 +151,12 @@
           border: 1px solid transparent;
 
           .client-info {
+            display: flex;
             padding: 3px 8px;
+
+            .receipt {
+              margin-right: 3px;
+            }
           }
 
           &:hover {

@@ -33,7 +33,12 @@
                          'payed' : session.paymentState == SessionPaymentState.payed,
                          'future' : session.isFuture}">
             <div class="client-info">
-              {{session.timeString}}
+              <div class="receipt" *ngIf="session.receipt">
+                <i class="fa-solid fa-receipt"></i>
+              </div>
+              <div class="session-time">
+                {{session.timeString}}
+              </div>
             </div>
             <div class="client-info">
               {{session.clientName}}

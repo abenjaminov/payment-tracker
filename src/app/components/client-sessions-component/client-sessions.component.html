@@ -15,6 +15,9 @@
           <div class="col col-fill col-title">Notes</div>
           <div class="col col-title fill">State</div>
           <div class="col col-title col-wide">Payment Date</div>
+          <div class="col col-title col-short">
+            Receipt
+          </div>
           <div class="col col-title fill">Actions</div>
         </div>
         <div class="row" *ngIf="sessionToAdd">
@@ -26,6 +29,9 @@
           <div class="col col-fill"><input type="text" [(ngModel)]="sessionToAdd.notes"/></div>
           <div class="col">--</div>
           <div class="col col-wide">--</div>
+          <div class="col col-title col-short">
+            &nbsp;
+          </div>
           <div class="col col-action" (click)="onAddSessionClicked()">
             <div class="action" *ngIf="!isAddingSession">
               <i class="fa-solid fa-plus"></i> Add
@@ -45,6 +51,9 @@
             <div class="col col-fill"><input type="text" [(ngModel)]="session.notes"/></div>
             <div class="col">--</div>
             <div class="col col-wide"><input type="datetime-local" required [ngModel]="session.datePayed | date:'yyyy-MM-ddTHH:mm'" (ngModelChange)="onSessionToAddDatePayedChanged(session, $event)"/></div>
+            <div class="col col-title col-short">
+              <input type="checkbox" [(ngModel)]="session.receipt"/>
+            </div>
             <div class="col col-action" (click)="onSaveSessionClicked(session)">
               <div class="action" *ngIf="!loadingSessionIds[session.airTableId]">
                 <i class="fa-solid fa-floppy-disk"></i>
@@ -67,6 +76,9 @@
               {{session.isFuture ? 'Future' : (session.paymentState == SessionPaymentState.owed ? 'Debt' : 'Payed')}}
             </div>
             <div class="col col-wide">{{session.datePayedString}}</div>
+            <div class="col col-title col-short">
+              <input type="checkbox" [ngModel]="session.receipt" [disabled]="true"/>
+            </div>
             <div class="col col-action-split">
               <div class="action" *ngIf="!isLoading && !session.isFuture && !loadingSessionIds[session.airTableId]" (click)="onToggleSessionState(session)">
                 <i *ngIf="session.paymentState == SessionPaymentState.owed" class="fa-solid fa-coins"></i>

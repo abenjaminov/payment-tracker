@@ -74,7 +74,8 @@ export class ClientSessionsComponent {
       date: new Date(Date.now()),
       paymentState: SessionPaymentState.owed,
       clientIdRef: [this.clientService.selectedClient.airTableId],
-      payment: this.clientService.selectedClient.basePayment
+      payment: this.clientService.selectedClient.basePayment,
+      receipt: false
     }
   }
 

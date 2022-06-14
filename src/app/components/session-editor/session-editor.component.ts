@@ -64,7 +64,8 @@ export class SessionEditorComponent {
       this.title = "Create new session";
       this.editedSession = {
         date: new Date(sessionEditorArgs.sessionDay.year,sessionEditorArgs.sessionDay.month,sessionEditorArgs.sessionDay.date),
-        paymentState: SessionPaymentState.owed
+        paymentState: SessionPaymentState.owed,
+        receipt: false
       }
 
       this.isLoading = true;
