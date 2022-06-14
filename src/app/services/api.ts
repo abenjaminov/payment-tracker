@@ -331,7 +331,7 @@ export class Api {
             payment: session.payment,
             date: session.date,
             paymentState: SessionPaymentState[session.paymentState],
-            datePayed: session.datePayed,
+            datePayed: session.datePayed ? session.datePayed : null,
             notes: session.notes,
             LinkToQueries: sessionAsAny.LinkToQueries ? sessionAsAny.LinkToQueries : [await this.getQueriesRecordId()]
           }

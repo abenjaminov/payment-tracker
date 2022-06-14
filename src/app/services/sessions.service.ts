@@ -98,20 +98,17 @@ export class SessionsService {
 
   fixSessions(sessions: Array<Session>) {
     for(let session of sessions) {
-      session.date = new Date(session.date);
-      session.datePayed = session.datePayed ? new Date(session.datePayed) : undefined;
-      if(!session.datePayed) {
-        session.datePayedString = '--'
-      }
-      else {
-        session.datePayedString = dayjs(session.datePayed).format("MMMM D, YYYY");
-      }
-      session.dateString = dayjs(session.date).format("MMMM D, YYYY H:mm");
-      session.timeString = dayjs(session.date).format("H:mm");
-
-      const paymentState : any = SessionPaymentState[session.paymentState];
-      session.paymentState = paymentState;
+      this.fixSession(session);
     }
+  }
+
+  fixSession(session: Session) {
+    session.date = new Date(session.date);
+    session.datePayed = session.datePayed ? new Date(session.datePayed) : undefined;
+    const paymentState : any = SessionPaymentState[session.paymentState];
+    session.paymentState = paymentState;
+
+    this.prepForDisplay(session);
   }
 
   setPaymentState(session: Session, paymentState: SessionPaymentState) {
@@ -120,7 +117,8 @@ export class SessionsService {
       session.datePayed = undefined;
     }
     else if(paymentState == SessionPaymentState.payed) {
-      this.setSessionPayed(session)
+      session.paymentState = SessionPaymentState.payed;
+      session.datePayed = new Date();
     }
   }
 
@@ -133,10 +131,18 @@ export class SessionsService {
     else if(session.paymentState == SessionPaymentState.owed) {
       this.setPaymentState(session, SessionPaymentState.payed);
     }
+
+    this.prepForDisplay(session);
   }
 
-  setSessionPayed(session: Session) {
-    session.paymentState = SessionPaymentState.payed;
-    session.datePayed = new Date();
+  prepForDisplay(session: Session) {
+    session.dateString = dayjs(session.date).format("MMMM D, YYYY H:mm");
+    session.timeString = dayjs(session.date).format("H:mm");
+    if(!session.datePayed) {
+      session.datePayedString = '--'
+    }
+    else {
+      session.datePayedString = dayjs(session.datePayed).format("MMMM D, YYYY");
+    }
   }
 }

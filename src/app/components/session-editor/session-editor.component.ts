@@ -157,6 +157,6 @@ export class SessionEditorComponent {
   }
 
   togglePaymentState() {
-    this.editedSession.paymentState = this.editedSession.paymentState == SessionPaymentState.owed ? SessionPaymentState.payed : SessionPaymentState.owed;
+    this.sessionService.toggleSessionPaymentState(this.editedSession);
   }
 }
