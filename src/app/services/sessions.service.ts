@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {ApiService} from "./api.service";
-import {AirTableEntity, GetPagedArgs} from "../models";
+import {AirTableEntity, GetPagedArgs, GetResult} from "../models";
 import {
   MessagePopupComponentService,
   MessagePopupType
@@ -19,6 +19,7 @@ export interface GetSessionArgs extends GetPagedArgs{
   filterPaymentYear?: number;
   filterPaymentState?: SessionPaymentState
   filterText?: string;
+  offset?: string;
 }
 
 export enum SessionPaymentStateServer {
@@ -99,12 +100,28 @@ export class SessionsService {
     await this.apiService.post('sessions', [sessionToAdd]);
   }
 
-  async getSessions(filter?: GetSessionArgs) {
+  async getSessions(filter?: GetSessionArgs): Promise<GetResult<Session>> {
     const result = await this.apiService.get(`sessions`, filter)
 
-    this.fixSessions(result);
+    this.fixSessions(result.objects);
 
     return result;
+  }
+
+  async getAllSessions(filter: GetSessionArgs) : Promise<Array<Session>> {
+    const sessions = [];
+
+    let getResult = await this.getSessions(filter)
+
+    sessions.push(...getResult.objects);
+
+    while(getResult.offset) {
+      getResult = await this.getSessions(filter)
+
+      sessions.push(...getResult.objects);
+    }
+
+    return sessions;
   }
 
   fixSessions(sessions: Array<Session>) {

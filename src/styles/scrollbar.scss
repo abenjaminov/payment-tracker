@@ -1,0 +1,17 @@
+@import "mixins";
+
+body {
+  ::-webkit-scrollbar {
+    width: 16px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: $thirdColor;
+    border-radius: 100px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: $secondColor;
+    border-radius: 100px;
+  }
+}

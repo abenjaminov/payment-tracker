@@ -82,6 +82,11 @@ export interface GetPagedArgs {
   pageSize?: number;
 }
 
+export class GetResult<T> {
+  offset?: string;
+  objects: Array<T>
+}
+
 export interface GetMonthlyRevenueArgs {
   month: number;
   year: number;

@@ -5,9 +5,10 @@ import {AirtableBase} from "airtable/lib/airtable_base";
 import {FieldSet, Records, Table} from "airtable";
 import {Client, GetClientsArgs} from "./client.service";
 import {GetSessionArgs, Session, SessionPaymentState, SessionPaymentStateServer} from "./sessions.service";
-import {AirTableEntity, GetMonthlyRevenueArgs} from "../models";
+import {AirTableEntity, GetMonthlyRevenueArgs, GetResult} from "../models";
 import {ApiService} from "./api.service";
 import {CacheUrlGroup} from "./cache";
+import {HttpClient} from "@angular/common/http";
 
 export const apiVersion: string = '1.2.0';
 
@@ -53,7 +54,26 @@ export class Api {
 
   queryRecordId: string;
 
-  constructor() {
+  async select(tableName: string, queryParams: any) : Promise<GetResult<any>> {
+    let params = Object.keys(queryParams).map(x => {
+      return `${x}=${queryParams[x]}`
+    }).join('&');
+
+    let fetchResult: any = await this.http.get(`https://api.airtable.com/v0/${environment.airtableBaseId}/${tableName}?${params}`,{
+      headers: {
+        "authorization": `Bearer ${environment.airtableApiKey}`
+      }
+    }).toPromise();
+
+    const result = this.getViewObject2(fetchResult.records);
+
+    return {
+      objects: result,
+      offset: fetchResult.offset
+    };
+  }
+
+  constructor(private http: HttpClient) {
     Airtable.configure({
       endpointUrl: 'https://api.airtable.com',
       apiKey: environment.airtableApiKey
@@ -111,6 +131,17 @@ export class Api {
     }
 
     return this.queryRecordId;
+  }
+
+  getViewObject2(records : Array<any>) {
+    const objects = [];
+    for(let record of records) {
+      const airTableEntity = record.fields;
+      airTableEntity.airTableId = record.id;
+      objects.push(airTableEntity)
+    }
+
+    return objects;
   }
 
   getViewObject(records : Records<FieldSet>) {
@@ -171,42 +202,40 @@ export class Api {
           const conditions = [];
 
           if(filter.filterMonth !== undefined) {
-            conditions.push(`{month} = ${filter.filterMonth + 1}`);
+            conditions.push(`{month}=${filter.filterMonth + 1}`);
           }
 
           if(filter.filterPaymentYear && filter.filterPaymentMonth !== undefined) {
-            conditions.push(`{paymentMonth} = ${filter.filterPaymentMonth + 1}`);
-            conditions.push(`{paymentYear} = ${filter.filterPaymentYear}`);
+            conditions.push(`{paymentMonth}=${filter.filterPaymentMonth + 1}`);
+            conditions.push(`{paymentYear}=${filter.filterPaymentYear}`);
           }
 
           if(filter.filterClientId !== undefined) {
-            conditions.push(`{clientIdRef}&'' = '${filter.filterClientId}'`);
+            conditions.push(`{clientIdRef}='${filter.filterClientId}'`);
           }
 
           if(filter.filterPaymentState !== undefined) {
-            conditions.push(`{paymentState} = '${SessionPaymentState[filter.filterPaymentState]}'`)
+            conditions.push(`{paymentState}='${SessionPaymentState[filter.filterPaymentState]}'`)
           }
 
           if(filter.filterText) {
             let lowerFilter = filter.filterText.toLowerCase();
-            conditions.push(`OR(FIND('${lowerFilter}', LOWER({notes})),FIND('${lowerFilter}', LOWER({clientName}&'')))`)
+            conditions.push(`OR(FIND('${lowerFilter}',LOWER({notes})),FIND('${lowerFilter}',LOWER({clientName}&'')))`)
           }
 
-          if(filter.page) {
-            conditions.push(`FLOOR({id} / ${pageSize}) = ${filter.page - 1}`);
-          }
+          // if(filter.page) {
+          //   conditions.push(`FLOOR({id} / ${pageSize}) = ${filter.page - 1}`);
+          // }
 
           filterFormula = `AND(${conditions.join(",")})`;
         }
 
-        const selectResult = await this.sessionsTable.select({
+        const result = await this.select('Sessions',{
           pageSize: pageSize,
           view: 'Grid view',
           filterByFormula: filterFormula,
-          sort: [{ field: 'date', direction: 'desc' }]
-        }).firstPage();
-
-        const result = this.getViewObject(selectResult);
+          offset: filter && filter.offset ? filter.offset : ''
+        });
 
         return result;
       }
@@ -241,9 +270,9 @@ export class Api {
             filterPaymentMonth: args.month,
             filterPaymentYear: args.year
           };
-          let sessionsInMonth: Array<any> = await apiService.get('sessions', getSessionArgs);
+          let sessionsInMonth: GetResult<any> = await apiService.get('sessions', getSessionArgs);
 
-          revenue = sessionsInMonth.reduce((accumulator, curr) => {
+          revenue = sessionsInMonth.objects.reduce((accumulator, curr) => {
               if(curr.paymentState == SessionPaymentStateServer.payed)
                 return accumulator + curr.payment
               else {

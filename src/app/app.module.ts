@@ -23,6 +23,7 @@ import {NgxEchartsModule} from "ngx-echarts";
 import {RevenueGraphComponent} from "./components/revenue-graph/revenue-graph.component";
 import {SessionDayComponent} from "./components/session-day/session-day.component";
 import {SessionSummaryComponent} from "./components/session-summary/session-summary.component";
+import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import {SessionSummaryComponent} from "./components/session-summary/session-summ
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    HttpClientModule,
     NgxEchartsModule.forRoot({
       echarts: () => import('echarts')
     })

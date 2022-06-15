@@ -1,45 +1,60 @@
 import {Injectable} from "@angular/core";
 import {ApiService} from "../../services/api.service";
 import {ReplaySubject} from "rxjs";
+import {GetResult} from "../../models";
 
 export enum PagedEntityNames {
   sessions= 'sessions',
   clients = 'clients'
 }
 
+export interface FetchPageArgs {
+  pageSize: number,
+  offset: string
+}
+
 @Injectable()
 export class PagingComponentService {
-  onPageChange: ReplaySubject<void> = new ReplaySubject<void>(1);
+  onPageLoading: ReplaySubject<void> = new ReplaySubject<void>(1);
+  onPageLoad: ReplaySubject<Array<any>> = new ReplaySubject<Array<any>>(1);
   onPageServiceLoaded: ReplaySubject<void> = new ReplaySubject<void>(1);
 
-  private _currentPage: number = -1;
+  page: number = -1;
   pageSize: number;
   numberOfPages: number;
   totalCount: number;
   entityName: PagedEntityNames;
 
+  isLoaded: boolean = false;
+
+  fetch: (args: FetchPageArgs) => Promise<GetResult<any>>;
+  offset: string;
+
   constructor(private apiService: ApiService) {
   }
 
-  get page() {
-    return this._currentPage;
+  async loadNextPage() {
+    this.onPageLoading.next();
+
+    const result = await this.fetch({
+      pageSize: this.pageSize,
+      offset: this.offset
+    });
+
+    this.offset = result.offset;
+
+    this.onPageLoad.next(result.objects);
   }
 
-  set page(page: number) {
-    this._currentPage = page;
-
-    this.onPageChange.next();
-  }
-
-  async load(entityName: PagedEntityNames, pageSize = 25) {
+  async load(entityName: PagedEntityNames, pageSize = 25, fetch: (args: FetchPageArgs) => Promise<GetResult<any>>) {
+    this.fetch = fetch;
     this.entityName = entityName;
     this.pageSize = pageSize;
-    this.totalCount = await this.apiService.get('count', this.entityName);
+    this.offset = undefined;
 
-    this.numberOfPages = Math.floor(this.totalCount / this.pageSize) + 1;
+    await this.loadNextPage()
 
-    if(this._currentPage == -1) this._currentPage = 1;
-
+    this.isLoaded = true;
     this.onPageServiceLoaded.next();
   }
 }

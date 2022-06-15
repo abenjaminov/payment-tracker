@@ -34,9 +34,12 @@ export class ClientSessionsComponent {
   constructor(public clientService: ClientService, private pagingService: PagingComponentService,
               public sessionsService: SessionsService, private messageService: MessagePopupComponentService) {
 
-    pagingService.onPageChange.subscribe(async () => {
+    pagingService.onPageLoading.subscribe(() => {
       this.isLoading = true;
-      await this.init();
+    })
+
+    pagingService.onPageLoad.subscribe(async (sessions) => {
+      this.onPageLoaded(sessions);
       this.isLoading = false;
     })
   }
@@ -47,14 +50,9 @@ export class ClientSessionsComponent {
     this.isLoading = false;
   }
 
-  async init() {
-    await this.clientService.loadClient(this.clientAirTableId);
-
-    this.initSessionToAdd()
-
-    await this.pagingService.load(PagedEntityNames.clients, 15);
-
-    this.sessions = await this.sessionsService.getSessions({filterClientId: this.clientService.selectedClient.id});
+  onPageLoaded(sessions: Array<Session>) {
+    if(!this.sessions) this.sessions = [];
+    this.sessions.push(...sessions);
 
     this.sessionsMap = {};
 
@@ -65,6 +63,22 @@ export class ClientSessionsComponent {
     this.selectedCount = 0;
     this.isSessionSelected = {};
     this.loadingSessionIds = {};
+  }
+
+  async init() {
+    await this.clientService.loadClient(this.clientAirTableId);
+
+    this.initSessionToAdd()
+
+    await this.pagingService.load(PagedEntityNames.sessions, 10, async (args) => {
+      const getResult = await this.sessionsService.getSessions({
+        filterClientId: this.clientService.selectedClient.id,
+        pageSize: args.pageSize,
+        offset: args.offset
+      });
+
+      return getResult;
+    });
   }
 
   initSessionToAdd() {

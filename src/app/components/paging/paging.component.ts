@@ -14,7 +14,7 @@ export class PagingComponent {
   minPagesForSplit: number = 8;
 
   constructor(public pagingService: PagingComponentService) {
-    this.pagingService.onPageChange.subscribe(() => {
+    this.pagingService.onPageLoad.subscribe(() => {
       this.init();
     })
 
@@ -47,13 +47,7 @@ export class PagingComponent {
     this.pagingService.page = page;
   }
 
-  onPreviousPageClicked() {
-    if(this.pagingService.page == 1) return;
-    this.pagingService.page = this.pagingService.page - 1;
-  }
-
   onNextPageClicked() {
-    if(this.pagingService.page == this.pagingService.numberOfPages) return;
-    this.pagingService.page = this.pagingService.page + 1;
+    this.pagingService.loadNextPage();
   }
 }

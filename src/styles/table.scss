@@ -4,8 +4,6 @@
   justify-content: flex-start;
 
   &-bordered {
-    border: 1px solid black;
-
     .col:last-of-type {
       border-right: 0px!important;
     }
@@ -24,6 +22,10 @@
     display:flex;
     flex-direction: row;
     justify-content: flex-start;
+
+    &:last-child {
+      border-bottom: 1px solid black;
+    }
 
     &.selected {
       background-color: #f3f3f3;

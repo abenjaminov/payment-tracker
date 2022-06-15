@@ -92,7 +92,7 @@ export class SessionCalendarComponent {
   async updateSessions() {
     this.isLoading = true;
 
-    this.sessions = await this.sessionService.getSessions({
+    this.sessions = await this.sessionService.getAllSessions({
       filterMonth: this.month
     })
 
