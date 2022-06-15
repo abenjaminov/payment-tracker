@@ -2,10 +2,10 @@
   <div class="session-day box" *ngIf="sessionDay" (click)="preventClosePopup($event)">
     <div class="title">
       <div class="day-name">
-        Wednesday
+        {{dayNames[sessionDay.day]}}
       </div>
       <div class="date">
-        June 15, 2022
+        {{monthNames[sessionDay.month]}} {{sessionDay.date}}, {{sessionDay.year}}
       </div>
     </div>
     <div class="sessions-container">
