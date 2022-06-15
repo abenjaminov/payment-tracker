@@ -10,7 +10,7 @@ import {ApiService} from "./api.service";
 import {CacheUrlGroup} from "./cache";
 import {HttpClient} from "@angular/common/http";
 
-export const apiVersion: string = '1.2.0';
+export const apiVersion: string = '1.3.0';
 
 enum CacheUrlGroupKey {
   sessionsSaved
