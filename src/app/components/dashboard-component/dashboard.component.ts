@@ -7,18 +7,22 @@ import {BoxNumberDisplayMonthlyRevenueAverageService} from "../box-number-displa
 import {monthNames} from "../../models";
 import {NgxEchartsConfig} from "ngx-echarts/lib/ngx-echarts.directive";
 import {EChartsOption} from "echarts";
+import {BoxNumberDisplayYearlyReceiptsRevenueService} from "../box-number-display/services/box-number-display-yearly-receipts-revenue.service";
 
 @Component({
   selector: 'dashboard',
   templateUrl: 'dashboard.component.html',
   styleUrls: ['dashboard.component.scss'],
-  providers: [BoxNumberDisplayThisMonthRevenueService, BoxNumberDisplayTotalDebtService, BoxNumberDisplayFutureRevenueService, BoxNumberDisplayMonthlyRevenueAverageService]
+  providers: [BoxNumberDisplayThisMonthRevenueService,
+  BoxNumberDisplayYearlyReceiptsRevenueService,
+    BoxNumberDisplayTotalDebtService, BoxNumberDisplayFutureRevenueService, BoxNumberDisplayMonthlyRevenueAverageService]
 })
 export class DashboardComponent {
   constructor(public dashboardService: DashboardService,
               public boxNumberThisMonthRevenueAverageService: BoxNumberDisplayMonthlyRevenueAverageService,
               public boxNumberThisMonthRevenueService: BoxNumberDisplayThisMonthRevenueService,
               public boxNumberDisplayTotalDebtService: BoxNumberDisplayTotalDebtService,
-              public boxNumberDisplayFutureRevenueService: BoxNumberDisplayFutureRevenueService) {
+              public boxNumberDisplayFutureRevenueService: BoxNumberDisplayFutureRevenueService,
+              public boxNumberDisplayYearlyReceiptsRevenueService: BoxNumberDisplayYearlyReceiptsRevenueService) {
   }
 }

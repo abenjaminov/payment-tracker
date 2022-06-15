@@ -20,6 +20,7 @@ export interface GetSessionArgs extends GetPagedArgs{
   filterPaymentState?: SessionPaymentState
   filterText?: string;
   offset?: string;
+  filterReceipt? : boolean;
 }
 
 export enum SessionPaymentStateServer {

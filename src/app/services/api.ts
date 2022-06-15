@@ -10,7 +10,7 @@ import {ApiService} from "./api.service";
 import {CacheUrlGroup} from "./cache";
 import {HttpClient} from "@angular/common/http";
 
-export const apiVersion: string = '1.3.0';
+export const apiVersion: string = '1.3.1';
 
 enum CacheUrlGroupKey {
   sessionsSaved
@@ -205,8 +205,11 @@ export class Api {
             conditions.push(`{month}=${filter.filterMonth + 1}`);
           }
 
-          if(filter.filterPaymentYear && filter.filterPaymentMonth !== undefined) {
+          if(filter.filterPaymentMonth !== undefined) {
             conditions.push(`{paymentMonth}=${filter.filterPaymentMonth + 1}`);
+          }
+
+          if(filter.filterPaymentYear) {
             conditions.push(`{paymentYear}=${filter.filterPaymentYear}`);
           }
 
@@ -223,9 +226,9 @@ export class Api {
             conditions.push(`OR(FIND('${lowerFilter}',LOWER({notes})),FIND('${lowerFilter}',LOWER({clientName}&'')))`)
           }
 
-          // if(filter.page) {
-          //   conditions.push(`FLOOR({id} / ${pageSize}) = ${filter.page - 1}`);
-          // }
+          if(filter.filterReceipt !== undefined) {
+            conditions.push(`{receipt}='${filter.filterReceipt ? 1 : 0}'`)
+          }
 
           filterFormula = `AND(${conditions.join(",")})`;
         }
