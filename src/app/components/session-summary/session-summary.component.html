@@ -1,0 +1,19 @@
+<div class="session-summary" *ngIf="session"
+     [ngClass]="{'debt' : session.paymentState == SessionPaymentState.owed,
+                         'payed' : session.paymentState == SessionPaymentState.payed,
+                         'future' : session.isFuture}">
+  <div class="client-info">
+    <div class="receipt" *ngIf="session.receipt">
+      <i class="fa-solid fa-receipt"></i>
+    </div>
+    <div class="session-time">
+      {{session.timeString}}
+    </div>
+  </div>
+  <div class="client-info">
+    {{session.clientName}}
+  </div>
+</div>
+<div class="session-summary more" *ngIf="!session">
+  More...
+</div>

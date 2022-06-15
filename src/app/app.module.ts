@@ -21,6 +21,8 @@ import {SessionEditorComponent} from "./components/session-editor/session-editor
 import {PagingComponent} from "./components/paging/paging.component";
 import {NgxEchartsModule} from "ngx-echarts";
 import {RevenueGraphComponent} from "./components/revenue-graph/revenue-graph.component";
+import {SessionDayComponent} from "./components/session-day/session-day.component";
+import {SessionSummaryComponent} from "./components/session-summary/session-summary.component";
 
 @NgModule({
   declarations: [
@@ -39,7 +41,9 @@ import {RevenueGraphComponent} from "./components/revenue-graph/revenue-graph.co
     SessionCalendarComponent,
     SessionEditorComponent,
     PagingComponent,
-    RevenueGraphComponent
+    RevenueGraphComponent,
+    SessionDayComponent,
+    SessionSummaryComponent
   ],
   imports: [
     BrowserModule,

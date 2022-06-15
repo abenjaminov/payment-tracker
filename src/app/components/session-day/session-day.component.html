@@ -1,0 +1,19 @@
+<div class="full-session-day" [ngClass]="{'open' : isOpen, 'closed' : !isOpen}" (click)="closePopup()">
+  <div class="session-day box" *ngIf="sessionDay" (click)="preventClosePopup($event)">
+    <div class="title">
+      <div class="day-name">
+        Wednesday
+      </div>
+      <div class="date">
+        June 15, 2022
+      </div>
+    </div>
+    <div class="sessions-container">
+      <div class="sessions">
+        <div class="session" *ngFor="let session of sessionDay.sessions">
+          <session-summary [session]="session" (click)="onSessionClicked(session)"></session-summary>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

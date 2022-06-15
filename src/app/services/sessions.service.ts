@@ -7,6 +7,10 @@ import {
 } from "../components/message-popup/message-popup.component.service";
 import {systemMessages} from "../../messages";
 import dayjs from "dayjs";
+import {
+  SessionEditorArgs,
+  SessionEditorComponentService
+} from "../components/session-editor/session-editor.component.service";
 
 export interface GetSessionArgs extends GetPagedArgs{
   filterClientId?: string;
@@ -48,7 +52,13 @@ export class Session implements AirTableEntity {
 @Injectable({providedIn: 'root'})
 export class SessionsService {
 
-  constructor(private apiService: ApiService, private messageService: MessagePopupComponentService) {
+  constructor(private apiService: ApiService,
+              private sessionEditorService: SessionEditorComponentService,
+              private messageService: MessagePopupComponentService) {
+  }
+
+  showSessionEditor(args: SessionEditorArgs) {
+    this.sessionEditorService.showEditor(args);
   }
 
   async saveSession(sessionsToEdit: Array<Session>) {

@@ -4,6 +4,7 @@ import {Session, SessionPaymentState, SessionsService} from "../../services/sess
 import {SessionEditorComponentService} from "../session-editor/session-editor.component.service";
 import {Subscription} from "rxjs";
 import {MessagePopupComponentService, MessagePopupType} from "../message-popup/message-popup.component.service";
+import {SessionDayComponentService} from "../session-day/session-day.component.service";
 
 @Component({
   selector: 'session-calendar',
@@ -30,7 +31,10 @@ export class SessionCalendarComponent {
 
   closeEditorSub: Subscription;
 
-  constructor(private sessionService: SessionsService, private sessionEditorComponentService: SessionEditorComponentService, private messageService: MessagePopupComponentService) {
+  constructor(private sessionService: SessionsService,
+              private sessionEditorComponentService: SessionEditorComponentService,
+              private messageService: MessagePopupComponentService,
+              private sessionDayService: SessionDayComponentService) {
     this.closeEditorSub = this.sessionEditorComponentService.onCloseEditor.subscribe(() => {
       this.update();
     })
@@ -61,7 +65,7 @@ export class SessionCalendarComponent {
   }
 
   onSessionClicked(sessionDay: SessionDay, session: Session) {
-    this.sessionEditorComponentService.showEditor({
+    this.sessionService.showSessionEditor({
       session: session,
       sessionDay: sessionDay
     })
@@ -190,16 +194,9 @@ export class SessionCalendarComponent {
     this.init(month, year);
   }
 
-  onMoreClicked() {
-    this.messageService.showMessage({
-      title: "אופס",
-      message: "זה עדיין לא עובד, ממש בקרוב.",
-      actions : [{
-        isClose: true,
-        isPrimary: true,
-        text: "סבבה"
-      }],
-      type: MessagePopupType.info
+  onMoreClicked(sessionDay) {
+    this.sessionDayService.showEditor({
+      sessionDay
     })
   }
 }

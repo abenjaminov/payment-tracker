@@ -28,24 +28,11 @@
           </div>
         </div>
         <div class="day-sessions">
-          <div class="day-session" *ngFor="let session of day.firstThreeSessions" (click)="onSessionClicked(day, session)"
-               [ngClass]="{'debt' : session.paymentState == SessionPaymentState.owed,
-                         'payed' : session.paymentState == SessionPaymentState.payed,
-                         'future' : session.isFuture}">
-            <div class="client-info">
-              <div class="receipt" *ngIf="session.receipt">
-                <i class="fa-solid fa-receipt"></i>
-              </div>
-              <div class="session-time">
-                {{session.timeString}}
-              </div>
-            </div>
-            <div class="client-info">
-              {{session.clientName}}
-            </div>
+          <div class="day-session" *ngFor="let session of day.firstThreeSessions">
+            <session-summary [session]="session"  (click)="onSessionClicked(day, session)"></session-summary>
           </div>
-          <div class="day-session more" *ngIf="day.sessions && day.sessions.length > 3" (click)="onMoreClicked()">
-            More...
+          <div class="day-session" *ngIf="day.sessions && day.sessions.length > 3" (click)="onMoreClicked(day)">
+            <session-summary></session-summary>
           </div>
         </div>
       </div>

@@ -131,59 +131,13 @@
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
-        align-items: center;
         flex:1;
-        width: 100%;
-
+        width: calc(100% - 10px);
+        padding: 0px 5px;
 
         .day-session {
-          border-radius: 8px;
-          display: flex;
-          flex-direction: row;
-          justify-content: space-between;
-          align-items: center;
-          color:white;
-          margin-top: 2px;
-          font-size: 12px;
-          height: calc(25% - 6px);
-          width: calc(100% - 6px);
-          font-weight: bold;
-          border: 1px solid transparent;
-
-          .client-info {
-            display: flex;
-            padding: 3px 8px;
-
-            .receipt {
-              margin-right: 3px;
-            }
-          }
-
-          &:hover {
-            border: 1px solid black;
-            cursor:pointer;
-          }
-
-          &.payed {
-            background-color: lightgreen;
-            color: black;
-          }
-
-          &.debt {
-            background-color: red;
-            color:white;
-          }
-
-          &.future {
-            background-color: #474B60;
-            color:white;
-          }
-
-          &.more {
-            color: #474B60;
-            background-color: lightgrey;
-            justify-content: center;
-          }
+          height: 18%;
+          margin-bottom: 2%;
         }
       }
     }

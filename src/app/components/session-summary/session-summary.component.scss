@@ -1,0 +1,47 @@
+.session-summary {
+  border-radius: 8px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  color:white;
+  font-size: 12px;
+  font-weight: bold;
+  border: 1px solid transparent;
+  height: 100%;
+
+  .client-info {
+    display: flex;
+    padding: 3px 8px;
+
+    .receipt {
+      margin-right: 3px;
+    }
+  }
+
+  &:hover {
+    border: 1px solid black;
+    cursor:pointer;
+  }
+
+  &.payed {
+    background-color: lightgreen;
+    color: black;
+  }
+
+  &.debt {
+    background-color: red;
+    color:white;
+  }
+
+  &.future {
+    background-color: #474B60;
+    color:white;
+  }
+
+  &.more {
+    color: #474B60;
+    background-color: bisque;
+    justify-content: center;
+  }
+}
