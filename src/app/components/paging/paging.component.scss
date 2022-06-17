@@ -5,35 +5,8 @@
   justify-content: center;
   align-items: center;
 
-  .pages {
-    display: flex;
-    justify-content: center;
-
-    .page-link {
-      margin: 0px 5px;
-      font-size: 20px;
-      cursor: pointer;
-
-      &:hover {
-        color: #474B60;
-      }
-
-      &.current-page {
-        font-weight: bold;
-      }
-    }
-  }
-
-  .page-switch {
-    font-size: 24px;
-
-    &:hover {
-      cursor: pointer;
-    }
-
-    &.disabled {
-      color: #F5F5F5;
-      cursor: default;
-    }
+  &:hover {
+    cursor: pointer;
+    font-weight: bold;
   }
 }

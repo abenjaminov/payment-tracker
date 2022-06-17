@@ -1,6 +1,8 @@
 <div class="backdrop" [ngClass]="{'open' : isOpen, 'closed' : !isOpen}" (click)="closeEditor()">
   <div class="editor box" *ngIf="editedSession" (click)="preventCloseEditor($event)"
-       [ngClass]="{'debt-session' : !isCreate && editedSession.paymentState == SessionPaymentState.owed,'payed-session' : !isCreate && editedSession.paymentState == SessionPaymentState.payed}">
+       [ngClass]="{'debt-session' : !isCreate && editedSession.paymentState == SessionPaymentState.owed && !editedSession.isFuture,
+                   'payed-session' : !isCreate && editedSession.paymentState == SessionPaymentState.payed && !editedSession.isFuture,
+                   'future-session' : !isCreate && editedSession.paymentState == SessionPaymentState.owed && editedSession.isFuture}">
     <div class="title">
       {{title}}
     </div>
