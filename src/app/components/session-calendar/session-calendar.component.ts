@@ -136,7 +136,13 @@ export class SessionCalendarComponent {
       });
     }
 
-    for (let i = 1; i <= 3; i++) {
+    let numberOfMidWeeks = 3;
+
+    if(this.currentMonth.numberOfDays - ( date + 21) > 7) {
+      numberOfMidWeeks = 4;
+    }
+
+    for (let i = 1; i <= numberOfMidWeeks; i++) {
       this.sessionDays.push([]);
 
       for (let j = 0; j < 7; j++) {
@@ -167,7 +173,7 @@ export class SessionCalendarComponent {
       const month = isNextMonth ? this.currentMonth.nextMonth : this.currentMonth.month;
       const isToday = year == currentDate.getFullYear() && month == currentDate.getMonth() && date == currentDate.getDate();
 
-      this.sessionDays[4].push({
+      this.sessionDays[this.sessionDays.length - 1].push({
         year,
         month,
         day: i,
