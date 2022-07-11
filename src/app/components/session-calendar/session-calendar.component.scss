@@ -43,10 +43,14 @@
   }
 }
 
+.session-calendar-container {
+  overflow-y: scroll;
+}
+
 .sessions-calendar {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  padding-bottom: 10px;
 
   .row {
     display: flex;
@@ -60,7 +64,7 @@
     }
 
     &:not(&.day-header) {
-      height: 16.667%;
+      height: 120px;
     }
   }
 

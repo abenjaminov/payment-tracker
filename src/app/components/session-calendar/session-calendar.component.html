@@ -11,31 +11,34 @@
       <i class="fa fa-chevron-right"></i>
     </div>
   </div>
-  <div class="sessions-calendar box">
-    <div class="day-header row">
-      <div *ngFor="let dayName of dayNames" class="col">
-        {{dayName}}
-      </div>
-    </div>
-    <div class="row" *ngFor="let dayRow of sessionDays">
-      <div *ngFor="let day of dayRow" class="col day" [ngClass]="{'not-current-month' : day.isNotDisplayedMonth, 'today' : day.isToday}">
-        <div class="day-title">
-          <div class="date">
-            {{day.date}}
-          </div>
-          <div class="action" (click)="onAddSessionClicked(day)">
-            <i class="fa fa-plus add-session"></i>
-          </div>
+  <div class="session-calendar-container box">
+    <div class="sessions-calendar">
+      <div class="day-header row">
+        <div *ngFor="let dayName of dayNames" class="col">
+          {{dayName}}
         </div>
-        <div class="day-sessions">
-          <div class="day-session" *ngFor="let session of day.firstThreeSessions">
-            <session-summary [session]="session"  (click)="onSessionClicked(day, session)"></session-summary>
+      </div>
+      <div class="row" *ngFor="let dayRow of sessionDays">
+        <div *ngFor="let day of dayRow" class="col day" [ngClass]="{'not-current-month' : day.isNotDisplayedMonth, 'today' : day.isToday}">
+          <div class="day-title">
+            <div class="date">
+              {{day.date}}
+            </div>
+            <div class="action" (click)="onAddSessionClicked(day)">
+              <i class="fa fa-plus add-session"></i>
+            </div>
           </div>
-          <div class="day-session" *ngIf="day.sessions && day.sessions.length > 3" (click)="onMoreClicked(day)">
-            <session-summary></session-summary>
+          <div class="day-sessions">
+            <div class="day-session" *ngFor="let session of day.firstThreeSessions">
+              <session-summary [session]="session"  (click)="onSessionClicked(day, session)"></session-summary>
+            </div>
+            <div class="day-session" *ngIf="day.sessions && day.sessions.length > 3" (click)="onMoreClicked(day)">
+              <session-summary></session-summary>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+
 </div>
