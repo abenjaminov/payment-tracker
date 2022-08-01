@@ -91,10 +91,10 @@
                 <div class="action" *ngIf="loadingSessionIds[session.airTableId]">
                   <i class="fa-solid fa-spinner spin"></i>
                 </div>
-                <div class="action" (click)="onEditSessionClicked(session)">
+                <!-- <div class="action" (click)="onEditSessionClicked(session)">
                   <i class="fa-solid fa-pen" *ngIf="!isLoading && !loadingSessionIds[session.airTableId] && selectedCount == 0"></i>
                   <ng-container *ngIf="isLoading || loadingSessionIds[session.airTableId] || selectedCount > 0">&nbsp;</ng-container>
-                </div>
+                </div> -->
                 <div class="action" (click)="onDeleteSessionClicked(session)" *ngIf="!isLoading">
                   <i class="fa-solid fa-minus" *ngIf="!isLoading && !loadingSessionIds[session.airTableId]"></i>
                   <ng-container *ngIf="isLoading || loadingSessionIds[session.airTableId]">&nbsp;</ng-container>

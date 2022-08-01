@@ -19,11 +19,11 @@ export class SidebarComponent {
     text: 'Dashboard',
     href: '/dashboard',
     isSelected: false
-  }, /*{
+  },{
     text: 'Clients',
     href: '/clients',
     isSelected: false
-  },*/{
+  },{
     text: 'Calendar',
     href: '/calendar',
     isSelected: false
