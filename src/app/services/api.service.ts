@@ -7,7 +7,6 @@ import {CacheService} from "./cache";
 })
 export class ApiService {
 
-  // Just a test
   constructor(private api: Api, public cache: CacheService) {
     this.api.configureEndpoints();
   }
